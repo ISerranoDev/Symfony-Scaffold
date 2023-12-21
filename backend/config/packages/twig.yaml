@@ -1,0 +1,15 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+
+    globals:
+        default_province_id: '%env(DEFAULT_PROVINCE_ID)%'
+        default_town: '%env(DEFAULT_TOWN)%'
+        default_postal_code: '%env(DEFAULT_POSTAL_CODE)%'
+
+when@dev:
+    twig:
+        auto_reload: true
+
+when@test:
+    twig:
+        strict_variables: true

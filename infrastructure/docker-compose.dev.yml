@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  backend:
+    container_name: symfony_scaffold_backend
+    build:
+      context: ./services/php/symfony6
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    volumes:
+      - ./../backend:/var/www/html
+    networks:
+      - symfony-scaffold-backend
+
+  mariadb:
+    container_name: symfony_scaffold_mariadb
+    image: mariadb:10.3.37
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    networks:
+      - symfony-scaffold-backend
+    ports:
+      - 3306:3306
+    restart: on-failure
+    volumes:
+      - symfony-scaffold-db-data:/var/lib/mysql
+
+  phpmyadmin:
+    container_name: symfony_scaffold_phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: mariadb
+      UPLOAD_LIMIT: 300M
+      MYSQL_ROOT_PASSWORD: mysql
+      PMA_PORT: 3306
+    restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - 8083:80
+    networks:
+      - symfony-scaffold-backend
+
+networks:
+  symfony-scaffold-backend:
+    driver: bridge
+
+volumes:
+  symfony-scaffold-db-data:
+    driver: local
