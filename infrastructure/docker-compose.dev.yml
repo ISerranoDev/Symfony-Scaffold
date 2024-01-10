@@ -1,6 +1,7 @@
 version: '3.3'
 services:
   backend:
+    image: symfony_scaffold_backend
     container_name: symfony_scaffold_backend
     build:
       context: ./services/php/symfony6
