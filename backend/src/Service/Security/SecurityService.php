@@ -2,12 +2,9 @@
 
 namespace App\Service\Security;
 
-use App\Entity\Counseling\Counseling;
-use App\Entity\GeneralManagement\GeneralManagement;
+
 use App\Entity\Role\Role;
 use App\Entity\User\User;
-use App\Repository\Counseling\CounselingRepository;
-use App\Repository\GeneralManagement\GeneralManagementRepository;
 use App\Repository\Role\RoleRepository;
 use App\Repository\User\UserRepository;
 use App\Request\Security\RegisterRequest;
@@ -15,10 +12,8 @@ use App\Utils\AbstractClasses\AbstractService;
 use App\Utils\Classes\EncryptService;
 use App\Utils\Classes\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityService extends AbstractService
@@ -29,8 +24,6 @@ class SecurityService extends AbstractService
     private \Doctrine\ORM\EntityRepository | UserRepository $userRepository;
     private \Doctrine\ORM\EntityRepository | RoleRepository $roleRepository;
     private EncryptService $encryptService;
-    private \Doctrine\ORM\EntityRepository | CounselingRepository $counselingRepository;
-    private \Doctrine\ORM\EntityRepository | GeneralManagementRepository $generalManagementRepository;
     private MailerService $mailerService;
 
     public function __construct(
@@ -42,8 +35,6 @@ class SecurityService extends AbstractService
     {
         $this->userRepository = $entityManager->getRepository(User::class);
         $this->roleRepository = $entityManager->getRepository(Role::class);
-        $this->counselingRepository = $entityManager->getRepository(Counseling::class);
-        $this->generalManagementRepository = $entityManager->getRepository(GeneralManagement::class);
 
         $this->authenticationUtils = $authenticationUtils;
         $this->mailerService = $mailerService;

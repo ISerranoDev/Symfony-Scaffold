@@ -3,14 +3,8 @@
 namespace App\Service\User;
 
 
-use App\Entity\Card\Card;
-use App\Entity\Counseling\Counseling;
-use App\Entity\GeneralManagement\GeneralManagement;
 use App\Entity\Role\Role;
 use App\Entity\User\User;
-use App\Repository\Card\CardRepository;
-use App\Repository\Counseling\CounselingRepository;
-use App\Repository\GeneralManagement\GeneralManagementRepository;
 use App\Repository\Role\RoleRepository;
 use App\Repository\User\UserRepository;
 use App\Request\User\CreateUserRequest;

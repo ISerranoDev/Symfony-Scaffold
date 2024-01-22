@@ -11,7 +11,5 @@
 /var/
 /vendor/
 /storage/*
-!/storage/counseling
-!/storage/general_management
 
 ###< symfony/framework-bundle ###

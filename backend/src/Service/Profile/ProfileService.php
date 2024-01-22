@@ -2,13 +2,8 @@
 
 namespace App\Service\Profile;
 
-use App\Entity\Counseling\Counseling;
-use App\Entity\GeneralManagement\GeneralManagement;
-use App\Entity\Role\Role;
+
 use App\Entity\User\User;
-use App\Repository\Counseling\CounselingRepository;
-use App\Repository\GeneralManagement\GeneralManagementRepository;
-use App\Repository\Role\RoleRepository;
 use App\Repository\User\UserRepository;
 use App\Request\Profile\EditProfileRequest;
 use App\Utils\AbstractClasses\AbstractService;

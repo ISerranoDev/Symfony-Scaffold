@@ -2,8 +2,6 @@
 
 namespace App\Repository\User;
 
-use App\Entity\Counseling\Counseling;
-use App\Entity\GeneralManagement\GeneralManagement;
 use App\Entity\User\User;
 use App\Utils\Classes\FilterService;
 use App\Utils\Interfaces\FilteredRepositoryInterface;
