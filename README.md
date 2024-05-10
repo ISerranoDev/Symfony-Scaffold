@@ -6,7 +6,7 @@
 
 ## Primera Instancia del Proyecto
 
-En primer lugar, el archivo *.env* está incluido en *.gitignore*, pero tenemos a mano nuestra configuración base en el archivo *.env.dist*, por lo que deberemos copiar ese archivo y pegarlo con el nombre de *.env* y la variable "APP_ENV" le asignaremos el valor que proceda ("DEV" o "PROD"). Así podremos cambiar la configuración que queramos sin afectar al directorio GIT.
+En primer lugar, el archivo *.env* está incluido en *.gitignore*, pero tenemos a mano nuestra configuración base en el archivo *.env.dist*, por lo que deberemos copiar ese archivo y pegarlo con el nombre de *.env* y la variable "APP_ENV" le asignaremos el valor que proceda ("DEV" o "PROD"). Así podremos cambiar la configuración que queramos sin afectar al directorio GIT. También deberemos cambiar las variables de entorno necesarias.
 
 Luego de esto hay que realizar los siguientes comandos.
 
