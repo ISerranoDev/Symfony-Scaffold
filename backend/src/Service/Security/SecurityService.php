@@ -116,6 +116,8 @@ class SecurityService extends AbstractService
             }
 
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
 

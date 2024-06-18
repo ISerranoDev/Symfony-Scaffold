@@ -1,0 +1,9 @@
+{% if app.request.query.all('errors') is defined %}
+
+    {% if app.request.query.all('errors')[name] is defined %}
+
+        <span class="form-text text-danger">{{ app.request.query.all('errors')[name]|join('<br>')|raw }}</span>
+
+    {% endif %}
+
+{% endif %}

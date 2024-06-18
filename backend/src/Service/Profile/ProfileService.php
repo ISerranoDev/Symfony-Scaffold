@@ -56,6 +56,8 @@ class ProfileService extends AbstractService
 
             $this->addFlash('success', 'Se ha editado el perfil satisfactoriamente');
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
         return $this->redirectToRoute('app_profile');

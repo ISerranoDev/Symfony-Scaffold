@@ -1,0 +1,159 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block page_title %}Usuarios ({{ totalUsers }}){% endblock %}
+
+{% block breadcrums %}
+    <ul class="breadcrumbs">
+        <li class="nav-home">
+            <a href="#">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a href="{{ path('app_users_list') }}">Usuarios</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex row align-content-start mb-2">
+        <form id="filter_form" class="d-none"></form>
+        <div class="col-3 align-items-center position-relative mt-2 mb-2">
+            <label>Nombre de Usuario</label>
+            <input type="text" form="filter_form" value="{{ filterService.getFilter('username') }}" name="{{ filterService.renderFieldName('username') }}" class="form-control" placeholder="Usuario">
+        </div>
+
+        <div class="col-3 align-items-center position-relative mt-2 mb-2">
+            <label>Email</label>
+            <input type="text" form="filter_form" value="{{ filterService.getFilter('email') }}" name="{{ filterService.renderFieldName('email') }}" class="form-control" placeholder="Email">
+        </div>
+
+        <div class="col-3 align-items-center position-relative mt-2 mb-2">
+            <label>Estado</label>
+            <select form="filter_form" name="{{ filterService.renderFieldName('enabled') }}" class="form-control" data-control="select2">
+                <option value="">Todos</option>
+                <option value="1" {% if filterService.getFilter('enabled') == "1" %}selected="selected"{% endif %}>Activo</option>
+                <option value="0" {% if filterService.getFilter('enabled') == "0" %}selected="selected"{% endif %}>Inactivo</option>
+            </select>
+        </div>
+
+        <div class="col-3 align-items-center position-relative mt-2 mb-2">
+            <label>Roles</label>
+            <select form="filter_form" name="{{ filterService.renderFieldName('roles') }}" class="form-control" data-control="select2">
+                <option value="">Todos</option>
+                {% for role in roles %}
+                    <option value="{{ role.id }}" {% if filterService.getFilter('roles') == role.id %}selected="selected"{% endif %}>{{ role.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-12 row ms-0 me-0 mt-2">
+            <div class="col-6 ">
+                <button form="filter_form" type="submit" class="btn btn-light">Filtrar</button>
+            </div>
+
+            <div class="col-6 text-end">
+                <a href="{{ path('app_users_render_new') }}" class="btn btn-primary">Crear Usuario</a>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="card card-flush w-100">
+
+        <!--begin::Card body-->
+        <div class="card-body pt-0">
+            <!--begin::Table container-->
+            <div class="table-responsive">
+                <!--begin::Table-->
+                <table id="kt_project_users_table" class="table table-row-bordered table-row-dashed gy-4 align-middle fw-bold">
+                    <thead class="fs-7 text-gray-700 text-uppercase">
+                    <tr>
+                        <th class="min-w-150px">
+                            <a href="{{ filterService.orderBy('username', filterService.getInversedOrder('username')) }}" >
+                                Usuario
+                                {% if filterService.isOrdered('username') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('username') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
+                            </a>
+                        </th>
+                        <th class="">
+                            <a href="{{ filterService.orderBy('roles', filterService.getInversedOrder('roles')) }}" >
+                                Roles
+                                {% if filterService.isOrdered('roles') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('roles') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
+                            </a>
+                        </th>
+                        <th class="">
+                            <a href="{{ filterService.orderBy('enabled', filterService.getInversedOrder('enabled')) }}" >
+                                Estado
+                                {% if filterService.isOrdered('enabled') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('enabled') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
+                            </a>
+                        </th>
+                        <th class="min-w-150px">Fechas</th>
+                        <th class="min-w-50px text-end">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody class="fs-6">
+                    {% for user in users %}
+                        <tr>
+                            <td>
+                                <!--begin::User-->
+                                <div class="d-flex align-items-center">
+                                    <!--begin::Info-->
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <a href="" class="mb-1 text-gray-800 text-hover-primary">{{ user.username }}</a>
+                                        <div class="fw-semibold fs-6 text-gray-400">{{ user.email }}</div>
+                                    </div>
+                                    <!--end::Info-->
+                                </div>
+                                <!--end::User-->
+                            </td>
+                            <td>{{ user.getRolesLabel|join(', ') }}</td>
+                            <td>
+                                <span class="badge badge-{% if user.enabled %}success{% else %}danger{% endif%} fw-bold px-4 py-3">{% if user.enabled %}Activo{% else %}Inactivo{% endif%}</span>
+                            </td>
+                            <td class="fs-7">
+                                {% if user.entryDate %}
+                                    <b>Alta:</b> <br> {{ user.entryDate|date('d/m/Y H:i') }} <br>
+                                {% endif %}
+                                {% if user.leavingDate %}
+                                    <b>Baja:</b> <br> {{ user.leavingDate|date('d/m/Y H:i') }} <br>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ path('app_users_render_show', {'id': user.id}) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Ver detalles"><i class="fas fa-eye fs-5"></i></a>
+                                <a href="{{ path('app_users_render_edit', {'id': user.id}) }}" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" title="Editar"><i class="fa fa-user-edit fs-5"></i></a>
+                                <a onclick="triggerForm('delete_user_{{ user.id }}_form')" href="#" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-trash fs-5"></i></a>
+
+                                <form id="delete_user_{{ user.id }}_form" method="post" action="{{ path('app_users_delete', {'id': user.id}) }}" class="d-none">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete-user') }}">
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center fw-light">No hay usuarios registrados.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <!--end::Table-->
+            </div>
+            <!--end::Table container-->
+        </div>
+        <!--end::Card body-->
+
+        <div class="card-footer pt-0">
+            <div class="navigation">
+                {{ knp_pagination_render(users) }}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

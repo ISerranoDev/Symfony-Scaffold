@@ -97,6 +97,8 @@ class UserService extends AbstractService
 
             $this->addFlash('success', 'Se ha creado el usuario satisfactoriamente');
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
         return $this->redirectToRoute('app_users_list');
@@ -131,6 +133,8 @@ class UserService extends AbstractService
 
             $this->addFlash('success', 'Se ha editado el usuario satisfactoriamente');
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
         return $this->redirectToRoute('app_users_list');
@@ -148,6 +152,8 @@ class UserService extends AbstractService
 
             $this->addFlash('success', 'Se ha eliminado el usuario satisfactoriamente');
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
         return $this->redirectToRoute('app_users_list');
