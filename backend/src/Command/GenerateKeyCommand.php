@@ -39,6 +39,9 @@ class GenerateKeyCommand extends Command
         }
 
         $encKey = KeyFactory::generateEncryptionKey();
+        if(!is_dir(EncryptService::KEY_FOLDER_PATH)){
+            mkdir(EncryptService::KEY_FOLDER_PATH);
+        }
         KeyFactory::save($encKey, EncryptService::KEY_FILE_PATH);
 
         $io->success('Encryption Key generated successfully.');

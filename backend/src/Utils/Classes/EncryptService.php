@@ -16,8 +16,7 @@ class EncryptService
 {
 
     const KEY_FILE_PATH = 'encryption/encryption.key';
-    const HASH_KEY = 'UsLN^Dc6x9xP7n924NJoffw4$6p*9SNg#r0Qql#^bNusXh4dKU';
-    const METHOD = 'AES-128-CBC';
+    const KEY_FOLDER_PATH = 'encryption';
 
     /**
      * @param string $data
