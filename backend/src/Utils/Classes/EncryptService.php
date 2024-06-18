@@ -11,12 +11,23 @@ use ParagonIE\Halite\Alerts\InvalidType;
 use ParagonIE\Halite\HiddenString;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\Halite\Symmetric\Crypto;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class EncryptService
 {
 
+
     const KEY_FILE_PATH = 'encryption/encryption.key';
     const KEY_FOLDER_PATH = 'encryption';
+    private ParameterBagInterface $parameterBag;
+
+    #[Required]
+    public function configure(ParameterBagInterface $parameterBag): void
+    {
+        $this->parameterBag = $parameterBag;
+    }
 
     /**
      * @param string $data
@@ -69,14 +80,13 @@ class EncryptService
     public function hashData(string $data): string
     {
         // Create a cipher of the appropriate length for this method.
-        $ivsize = openssl_cipher_iv_length(self::METHOD);
         $iv = '0000000000000000';
 
         // Create the encryption.
         $ciphertext = openssl_encrypt(
             $data,
-            self::METHOD,
-            self::HASH_KEY,
+            $this->getHashMethod(),
+            $this->getHashKey(),
             OPENSSL_RAW_DATA,
             $iv
         );
@@ -100,16 +110,27 @@ class EncryptService
 
         $data = base64_decode($encodedData);
 
-        $ivsize = openssl_cipher_iv_length(self::METHOD);
+        $ivsize = openssl_cipher_iv_length($this->getHashMethod());
         $iv = mb_substr($data, 0, $ivsize, '8bit');
         $ciphertext = mb_substr($data, $ivsize, null, '8bit');
 
         return openssl_decrypt(
             $ciphertext,
-            self::METHOD,
-            self::HASH_KEY,
+            $this->getHashMethod(),
+            $this->getHashKey(),
             OPENSSL_RAW_DATA,
             $iv
         );
     }
+
+    private function getHashMethod(): string
+    {
+        return $this->parameterBag->get('hash-method');
+    }
+
+    private function getHashKey(): string
+    {
+        return $this->parameterBag->get('hash-key');
+    }
+
 }

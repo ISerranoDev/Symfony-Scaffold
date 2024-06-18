@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{% block title %}{% endblock %} - {{ app_name }}</title>
+    <meta
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+            name="viewport"
+    />
+    <link
+            rel="icon"
+            href="{{ asset('assets/img/kaiadmin/favicon.ico') }}"
+            type="image/x-icon"
+    />
+
+    <!-- Fonts and icons -->
+    <script src="{{ asset('assets/js/plugin/webfont/webfont.min.js') }}"></script>
+    <script>
+        WebFont.load({
+            google: { families: ["Public Sans:300,400,500,600,700"] },
+            custom: {
+                families: [
+                    "Font Awesome 5 Solid",
+                    "Font Awesome 5 Regular",
+                    "Font Awesome 5 Brands",
+                    "simple-line-icons",
+                ],
+                urls: ["{{ asset('assets/css/fonts.min.css') }}"],
+            },
+            active: function () {
+                sessionStorage.fonts = true;
+            },
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
+    {% block stylesheet %}{% endblock %}
+</head>
+<body>
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar" data-background-color="dark">
+        <div class="sidebar-logo">
+            <!-- Logo Header -->
+            <div class="logo-header" data-background-color="dark">
+                <a href="{{ path('app_dashboard') }}" class="logo">
+                    <img
+                            src="{{ asset('assets/img/kaiadmin/logo_light.svg') }}"
+                            alt="navbar brand"
+                            class="navbar-brand"
+                            height="20"
+                    />
+                </a>
+                <div class="nav-toggle">
+                    <button class="btn btn-toggle toggle-sidebar">
+                        <i class="gg-menu-right"></i>
+                    </button>
+                    <button class="btn btn-toggle sidenav-toggler">
+                        <i class="gg-menu-left"></i>
+                    </button>
+                </div>
+                <button class="topbar-toggler more">
+                    <i class="gg-more-vertical-alt"></i>
+                </button>
+            </div>
+            <!-- End Logo Header -->
+        </div>
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+            <div class="sidebar-content">
+                <ul class="nav nav-secondary">
+                    <li class="nav-item {% if app.request.attributes.get('_route') starts with 'app_dashboard' %}active{% endif %}">
+                        <a
+                                href="{{ path('app_dashboard') }}"
+                        >
+                            <i class="fas fa-home"></i>
+                            <p>Panel de control</p>
+                        </a>
+                    </li>
+                    <li class="nav-section">
+                        <span class="sidebar-mini-icon">
+                          <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                        <h4 class="text-section">Administración</h4>
+                    </li>
+                    <li class="nav-item {% if app.request.attributes.get('_route') starts with 'app_users' %}active{% endif %}">
+                        <a
+                                href="{{ path('app_users_list') }}"
+                        >
+                            <i class="fas fa-users"></i>
+                            <p>Usuarios</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- End Sidebar -->
+
+    <div class="main-panel">
+        <div class="main-header">
+            <div class="main-header-logo">
+                <!-- Logo Header -->
+                <div class="logo-header" data-background-color="dark">
+                    <a href="index.html" class="logo">
+                        <img
+                                src="assets/img/kaiadmin/logo_light.svg"
+                                alt="navbar brand"
+                                class="navbar-brand"
+                                height="20"
+                        />
+                    </a>
+                    <div class="nav-toggle">
+                        <button class="btn btn-toggle toggle-sidebar">
+                            <i class="gg-menu-right"></i>
+                        </button>
+                        <button class="btn btn-toggle sidenav-toggler">
+                            <i class="gg-menu-left"></i>
+                        </button>
+                    </div>
+                    <button class="topbar-toggler more">
+                        <i class="gg-more-vertical-alt"></i>
+                    </button>
+                </div>
+                <!-- End Logo Header -->
+            </div>
+            <!-- Navbar Header -->
+            <nav
+                    class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
+            >
+                <div class="container-fluid">
+
+                    <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+
+                        <li class="nav-item topbar-icon dropdown hidden-caret">
+                            <a
+                                    class="nav-link"
+                                    data-bs-toggle="dropdown"
+                                    href="{{ path('app_tickets_list') }}"
+                                    aria-expanded="false"
+                            >
+                                <i class="fas fa-exclamation-circle"></i>
+                            </a>
+                        </li>
+
+                        <li class="nav-item topbar-user dropdown hidden-caret">
+                            <a
+                                    class="dropdown-toggle profile-pic"
+                                    data-bs-toggle="dropdown"
+                                    href="#"
+                                    aria-expanded="false"
+                            >
+                                <span class="profile-username">
+                      <span class="op-7 fs-4">Bienvenido de nuevo,</span>
+                      <span class="fw-bold fs-2">{{ app.user.name }} {{ app.user.surname1 }} {{ app.user.surname2 }}</span>
+                    </span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-user animated fadeIn">
+                                <div class="dropdown-user-scroll scrollbar-outer">
+                                    <li>
+                                        <div class="user-box">
+                                            <div class="u-text">
+                                                <h4>{{ app.user.username }}</h4>
+                                                <p class="text-muted">{{ app.user.email }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{{ path('app_profile') }}">Mi Perfil</a>
+                                        <a class="dropdown-item" href="{{ path('app_profile_render_edit') }}">Editar Perfil</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{{ path('app_logout') }}">Cerrar Sesión</a>
+                                    </li>
+                                </div>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+        </div>
+
+        <div class="container">
+            <div class="page-inner">
+                <div class="page-header">
+                    <h4 class="page-title">{% block page_title %}{% endblock %}</h4>
+                    {% block breadcrums %}{% endblock %}
+                </div>
+                <div class="page-category">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid d-flex justify-content-between">
+                <nav class="pull-left">
+
+                </nav>
+                <div class="copyright">
+                    2024, made with <i class="fa fa-heart heart text-danger"></i> by
+                    <a target="_blank" href="https://www.linkedin.com/in/ismael-serrano-l%C3%B3pez/">ISerranoDev</a>
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<!--   Core JS Files   -->
+<script src="{{ asset('assets/js/core/jquery-3.7.1.min.js') }}"></script>
+<script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
+
+<!-- jQuery Scrollbar -->
+<script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+
+
+<!-- Bootstrap Notify -->
+<script src="{{ asset('assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
+
+<!-- Sweet Alert -->
+<script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+
+<!-- Kaiadmin JS -->
+<script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
+<script src="{{ asset('assets/js/custom.js') }}"></script>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        {% for label, messages in app.flashes %}
+
+        {% set alertColor = '' %}
+        {% set alertIcon = '' %}
+        {% set alertTitle = '' %}
+        {% if label == 'success' %}
+        {% set alertColor = 'success' %}
+        {% set alertTitle = 'Correcto' %}
+        {% set alertIcon = 'fa fa-bell' %}
+        {% elseif label == 'error' %}
+        {% set alertColor = 'danger' %}
+        {% set alertTitle = 'Error' %}
+        {% set alertIcon = 'fa fa-bell' %}
+        {% elseif label == 'warning' %}
+        {% set alertColor = 'warning' %}
+        {% set alertTitle = 'Advertencia' %}
+        {% set alertIcon = 'fa fa-bell' %}
+        {% endif %}
+
+        $.notify({
+            icon: '{{ alertIcon }}',
+            title: '{{ alertTitle }}',
+            message: '{{ messages|join('<br>')|raw }}'
+        }, {
+            type: '{{ alertColor }}',
+            placement: {
+                from: 'top',
+                align: 'right'
+            },
+            time: 1000,
+            delay: 0,
+        });
+        {% endfor %}
+
+    })
+
+</script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

@@ -43,6 +43,7 @@ class SecurityService extends AbstractService
 
     public function login(): Response
     {
+
         if ($this->getUser()) {
              return $this->redirectToRoute('app_dashboard');
         }
