@@ -104,6 +104,8 @@ class TicketService extends AbstractService
 
             $this->addFlash('success', 'Se ha creado la incidencia satisfactoriamente');
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
         return $this->redirectToRoute('app_tickets_list');
@@ -133,6 +135,8 @@ class TicketService extends AbstractService
 
             $this->addFlash('success', 'Se ha editado la incidencia satisfactoriamente');
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
         return $this->redirectToRoute('app_tickets_list');
@@ -157,6 +161,8 @@ class TicketService extends AbstractService
 
             $this->addFlash('success', 'Se ha cambiado el estado de la incidencia satisfactoriamente');
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
         return $this->redirectBack();

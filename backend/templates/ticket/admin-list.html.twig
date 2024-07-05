@@ -1,0 +1,100 @@
+<div class="card card-flush">
+
+    <!--begin::Card body-->
+    <div class="card-body pt-0">
+        <!--begin::Table container-->
+        <div class="table-responsive">
+            <!--begin::Table-->
+            <table class="table table-row-bordered table-row-dashed gy-4 align-middle fw-bold">
+                <thead class="fs-7 text-gray-400 text-uppercase">
+                <tr>
+                    <th class="min-w-150px">
+                        <a href="{{ filterService.orderBy('username', filterService.getInversedOrder('username')) }}" >
+                            Usuario
+                            {% if filterService.isOrdered('username') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('username') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th class="">
+                        <a href="{{ filterService.orderBy('title', filterService.getInversedOrder('title')) }}" >
+                            Título
+                            {% if filterService.isOrdered('title') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('title') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th class="">
+                        <a href="{{ filterService.orderBy('closed', filterService.getInversedOrder('closed')) }}" >
+                            Estado
+                            {% if filterService.isOrdered('closed') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('closed') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th class="">
+                        <a href="{{ filterService.orderBy('createdAt', filterService.getInversedOrder('createdAt')) }}" >
+                            Fecha
+                            {% if filterService.isOrdered('createdAt') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('createdAt') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th class=" text-end">Acciones</th>
+                </tr>
+                </thead>
+                <tbody class="fs-6">
+                {% for ticket in tickets %}
+                    <tr>
+                        <td>
+                            <!--begin::User-->
+                            <div class="d-flex align-items-center">
+                                <!--begin::Info-->
+                                <div class="d-flex flex-column justify-content-center">
+                                    {% if ticket.user %}
+                                        <a href="" class="mb-1 text-gray-800 text-hover-primary">{{ ticket.user.username }}</a>
+                                        <div class="fw-semibold fs-6 text-gray-400">{{ ticket.user.email }}</div>
+                                    {% else %}
+                                        <a href="" class="mb-1 text-gray-800 text-hover-primary">Sistema</a>
+                                    {% endif %}
+                                </div>
+                                <!--end::Info-->
+                            </div>
+                            <!--end::User-->
+                        </td>
+                        <td>{{ ticket.title }}</td>
+                        <td>
+                            <span class="badge badge-{% if ticket.closed %}secondary{% else %}success{% endif%} fw-bold px-4 py-3">{% if ticket.closed %}Cerrada{% else %}Abierta{% endif%}</span>
+                        </td>
+                        <td class="fs-7">
+                            {{ ticket.createdAt |date('d/m/Y H:i') }}
+                        </td>
+                        <td class="text-end " >
+                            <a href="{{ path('app_tickets_render_show', {'id': ticket.id}) }}" class="btn btn-primary btn-sm mb-1" data-bs-toggle="tooltip" title="Ver detalles"><i class="fas fa-eye fs-5"></i></a>
+                            <a href="#" onclick="document.getElementById('change_status_ticket_{{ ticket.id }}_form').submit()" class="btn btn-warning btn-sm mb-1" data-bs-toggle="tooltip" title="Cambiar estado"><i class="fas fa-retweet fs-5"></i></a>
+                            <br>
+                            <a href="{{ path('app_tickets_render_edit', {'id': ticket.id}) }}" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" title="Editar"><i class="fas fa-pencil-alt fs-5"></i></a>
+                            <a onclick="triggerForm('delete_ticket_{{ ticket.id }}_form')" href="#" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-trash fs-5"></i></a>
+
+
+                            <form id="change_status_ticket_{{ ticket.id }}_form" method="post" action="{{ path('app_tickets_change_status', {'id': ticket.id}) }}" class="d-none">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('change-status-ticket') }}">
+                                <input type="hidden" name="closed" value="{{ ticket.closed ? 0 : 1 }}">
+                            </form>
+                            <form id="delete_ticket_{{ ticket.id }}_form" method="post" action="{{ path('app_tickets_delete', {'id': ticket.id}) }}" class="d-none">
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete-ticket') }}">
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center fw-light">No hay incidencias registradas.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <!--end::Table-->
+        </div>
+        <!--end::Table container-->
+    </div>
+    <!--end::Card body-->
+
+    <div class="card-footer pt-2">
+        <div class="navigation">
+            {{ knp_pagination_render(tickets) }}
+        </div>
+    </div>
+
+</div>

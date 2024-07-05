@@ -1,0 +1,127 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Editar Usuario{% endblock %}
+
+{% block page_title %}Editar Usuario{% endblock %}
+
+{% block breadcrums %}
+    <ul class="breadcrumbs">
+        <li class="nav-home">
+            <a href="#">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a href="{{ path('app_users_list') }}">Usuarios</a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Editar Usuario</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+
+    <div class="col-12 row ms-0 me-0 mb-2">
+        <div class="col-6 ">
+        </div>
+
+        <div class="col-6 text-end">
+            <a href="{{ path('app_users_list') }}" class="btn btn-secondary">Listado de Usuarios</a>
+            <a href="{{ path('app_users_render_show', {'id': user.id}) }}" class="btn btn-primary">Ver Usuario</a>
+        </div>
+    </div>
+
+    <div class="card card-flush w-100">
+        <form action="{{ path('app_users_process_edit', {'id': user.id}) }}" method="post">
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('edit-user') }}">
+            <!--begin::Card body-->
+            <div class="card-body row">
+
+                <div class="col-6 mb-3">
+                    <label>Usuario <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="username" placeholder="Usuario" autocomplete="off" value="{{ user.username }}" required>
+                    {% include 'extra/error-message.html.twig' with {'name': 'username'} %}
+                </div>
+                <div class="col-6 mb-3">
+                    <label>Correo Electrónico <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" name="email" placeholder="Correo Electrónico" autocomplete="off" value="{{ user.email }}" required>
+                    {% include 'extra/error-message.html.twig' with {'name': 'email'} %}
+                </div>
+                <div class="col-6 mb-3">
+                    <label>Contraseña</label>
+                    <input type="password" class="form-control" name="password" placeholder="Contraseña" autocomplete="off">
+                    {% include 'extra/error-message.html.twig' with {'name': 'password'} %}
+                </div>
+                <div class="col-6 mb-3">
+                    <label>Repetir Contraseña</label>
+                    <input type="password" class="form-control" name="re-password" placeholder="Repetir Contraseña" autocomplete="off">
+                    {% include 'extra/error-message.html.twig' with {'name': 're-password'} %}
+                </div>
+
+                <div class="col-4 mb-3">
+                    <label>Nombre</label>
+                    <input type="text" class="form-control" name="name" placeholder="Nombre" value="{{ user.name }}" autocomplete="off">
+                    {% include 'extra/error-message.html.twig' with {'name': 'name'} %}
+                </div>
+
+                <div class="col-4 mb-3">
+                    <label>Primer apellido</label>
+                    <input type="text" class="form-control" name="surname1" placeholder="Primer Apellido" value="{{ user.surname1 }}" autocomplete="off">
+                    {% include 'extra/error-message.html.twig' with {'name': 'surname1'} %}
+                </div>
+
+                <div class="col-4 mb-3">
+                    <label>Segundo apellido</label>
+                    <input type="text" class="form-control" name="surname2" placeholder="Segundo Apellido" value="{{ user.surname2 }}" autocomplete="off">
+                    {% include 'extra/error-message.html.twig' with {'name': 'surname2'} %}
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label>Roles <span class="text-danger">*</span></label>
+                    <select class="form-select form-control" name="roles[]" data-control="select2" multiple required>
+                        {% for role in roles %}
+                            <option value="{{ role.id }}" {% if role.id in user.getRolesIds() %}selected="selected"{% endif %}>{{ role.label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% include 'extra/error-message.html.twig' with {'name': 'roles'} %}
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label>Estado <span class="text-danger">*</span></label>
+                    <select class="form-select form-control" name="enabled" data-control="select2" required>
+                        <option value="1" {% if user.enabled %}selected="selected"{% endif %} >Activo</option>
+                        <option value="0" {% if not user.enabled %}selected="selected"{% endif %} >Inactivo</option>
+                    </select>
+                    {% include 'extra/error-message.html.twig' with {'name': 'enabled'} %}
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label>Fecha de Alta</label>
+                    <input type="text" class="form-control" data-flatpicker="true" value="{{ user.entryDate ? user.entryDate|date('d/m/y H:i') : null }}" name="entry-date" autocomplete="off">
+                    {% include 'extra/error-message.html.twig' with {'name': 'entry-date'} %}
+                </div>
+
+                <div class="col-6 mb-3">
+                    <label>Fecha de Baja</label>
+                    <input type="text" class="form-control" data-flatpicker="true" value="{{ user.leavingDate ? user.leavingDate|date('d/m/y H:i') : null }}" name="leaving-date" autocomplete="off">
+                    {% include 'extra/error-message.html.twig' with {'name': 'leaving-date'} %}
+                </div>
+
+            </div>
+            <!--end::Card body-->
+
+            <div class="card-footer d-flex justify-content-end text-end">
+                <button type="submit" class="btn btn-primary">Editar</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

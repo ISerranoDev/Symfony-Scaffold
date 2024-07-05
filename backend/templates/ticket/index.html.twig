@@ -1,0 +1,70 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Incidencias{% endblock %}
+
+{% block page_title %}Incidencias{% endblock %}
+
+{% block breadcrums %}
+    <ul class="breadcrumbs">
+        <li class="nav-home">
+            <a href="#">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Incidencias</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex row align-content-start mb-2">
+        <form id="filter_form" class="d-none"></form>
+        {% if is_granted('ROLE_ADMIN')  %}
+            <div class="col-3 align-items-center position-relative mt-2 mb-2">
+                <label>Usuario</label>
+                <input type="text" form="filter_form" value="{{ filterService.getFilter('user_info') }}" name="{{ filterService.renderFieldName('user_info') }}" class="form-control" placeholder="Usuario, email....">
+            </div>
+        {% endif %}
+
+        <div class="col-3 align-items-center position-relative mt-2 mb-2">
+            <label>Título</label>
+            <input type="text" form="filter_form" value="{{ filterService.getFilter('title') }}" name="{{ filterService.renderFieldName('title') }}" class="form-control" placeholder="Título">
+        </div>
+
+        <div class="col-3 align-items-center position-relative mt-2 mb-2">
+            <label>Estado</label>
+            <select form="filter_form" name="{{ filterService.renderFieldName('closed') }}" class="form-control" data-control="select2">
+                <option value="">Todos</option>
+                <option value="0" {% if filterService.getFilter('closed') == "0" %}selected="selected"{% endif %}>Abierto</option>
+                <option value="1" {% if filterService.getFilter('closed') == "1" %}selected="selected"{% endif %}>Cerrado</option>
+            </select>
+        </div>
+
+        <div class="col-12 row ms-0 me-0 mt-2">
+            <div class="col-6 ">
+                <button form="filter_form" type="submit" class="btn btn-light">Filtrar</button>
+            </div>
+
+            <div class="col-6 text-end">
+                <a href="{{ path('app_tickets_render_new') }}" class="btn btn-primary">Crear Incidencia</a>
+            </div>
+        </div>
+
+    </div>
+
+    {% if is_granted('ROLE_ADMIN')  %}
+
+        {% include 'ticket/admin-list.html.twig' %}
+
+    {% else %}
+
+        {% include 'ticket/user-list.html.twig' %}
+
+    {% endif %}
+
+{% endblock %}

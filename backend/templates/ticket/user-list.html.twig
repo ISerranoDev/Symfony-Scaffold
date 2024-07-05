@@ -1,0 +1,72 @@
+<div class="card">
+    <!--begin::Card body-->
+    <div class="card-body">
+        <!--begin::Layout-->
+        <div class="d-flex flex-column flex-xl-row p-7">
+            <!--begin::Content-->
+            <div class="flex-lg-row-fluid me-xl-15 mb-20 mb-xl-0">
+                <!--begin::Tickets-->
+                <div class="mb-0">
+                    <!--begin::Tickets List-->
+                    <div class="mb-10">
+                        {% for ticket in tickets %}
+                            <!--begin::Ticket-->
+                            <div class="d-flex mb-10">
+                                <!--begin::Symbol-->
+                                {% if ticket.closed %}
+                                    <i class="ki-outline ki-archive-tick fs-2x me-5 ms-n1 mt-2 text-secondary"></i>
+                                {% else %}
+                                    <i class="ki-outline ki-book-open fs-2x me-5 ms-n1 mt-2 text-success"></i>
+                                {% endif %}
+                                <!--end::Symbol-->
+                                <!--begin::Section-->
+                                <div class="d-flex flex-column">
+                                    <!--begin::Content-->
+                                    <div class="d-flex align-items-center">
+                                        <!--begin::Title-->
+                                        <a href="{{ path('app_tickets_render_show', { 'id':ticket.id }) }}" class="text-dark text-hover-primary fs-4 me-3 fw-semibold">{{ ticket.title }}</a>
+                                        <!--end::Title-->
+                                        <!--begin::Label-->
+                                        <span class="badge badge-light-{% if ticket.closed %}secondary{% else %}success{% endif%} my-1">{% if ticket.closed %}Cerrada{% else %}Abierta{% endif%}</span>
+                                        <!--end::Label-->
+
+
+                                    </div>
+                                    <!--end::Content-->
+                                    <span class="text-muted small mb-2"><i>{{ ticket.createdAt |date('d/m/Y H:i') }}</i></span>
+                                    <!--begin::Text-->
+                                    <span class="text-muted fw-semibold fs-6 mb-2 mt-2">{{ ticket.description|nl2br }}</span>
+                                    <!--end::Text-->
+
+                                    <p>
+                                        <a href="{{ path('app_tickets_render_show', {'id': ticket.id}) }}" class="btn btn-primary btn-sm mb-1" data-bs-toggle="tooltip" title="Ver detalles"><i class="fas fa-eye fs-5"></i></a>
+                                        <a href="{{ path('app_tickets_render_edit', {'id': ticket.id}) }}" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" title="Editar"><i class="fas fa-pencil-alt fs-5"></i></a>
+                                        <a onclick="triggerForm('delete_ticket_{{ ticket.id }}_form')" href="#" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-trash fs-5"></i></a>
+
+
+                                        <form id="delete_ticket_{{ ticket.id }}_form" method="post" action="{{ path('app_tickets_delete', {'id': ticket.id}) }}" class="d-none">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete-ticket') }}">
+                                        </form>
+                                    </p>
+                                </div>
+                                <!--end::Section-->
+                            </div>
+                            <!--end::Ticket-->
+                        {% endfor %}
+
+                    </div>
+                    <!--end::Tickets List-->
+                    <!--begin::Pagination-->
+                    <div class="navigation pt-2">
+                        {{ knp_pagination_render(tickets) }}
+                    </div>
+                    <!--end::Pagination-->
+                </div>
+                <!--end::Tickets-->
+            </div>
+            <!--end::Content-->
+        </div>
+        <!--end::Layout-->
+    </div>
+    <!--end::Card body-->
+</div>

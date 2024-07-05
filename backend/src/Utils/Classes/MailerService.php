@@ -36,6 +36,7 @@ class MailerService
 
             return true;
         }catch (TransportExceptionInterface $exception){
+            dd($exception);
             return false;
         }
 

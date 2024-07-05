@@ -36,7 +36,6 @@ abstract class AbstractService extends EncryptService implements ServiceSubscrib
     {
         $previous = $this->container;
         $this->container = $container;
-
         return $previous;
     }
 
@@ -171,6 +170,7 @@ abstract class AbstractService extends EncryptService implements ServiceSubscrib
      */
     protected function getUser(): ?UserInterface
     {
+
         if (!$this->container->has('security.token_storage')) {
             throw new \LogicException('The SecurityBundle is not registered in your application. Try running "composer require symfony/security-bundle".');
         }

@@ -14,7 +14,7 @@ Luego de esto hay que realizar los siguientes comandos.
 
 Una vez instalados los vendors, generaremos una key para encriptar los datos.
 
-    php bin/console secrets:generate-keys
+    php bin/console app:generate-key
 
 Seguido de esto, procederemos a ejecutar las migraciones para tener nuestra base de datos actualizada (**importante**).
 
@@ -70,3 +70,6 @@ El proyecto cuenta con un sistema de filtros, en la carpeta *src/Utils/Classes*,
 * **__orders**: Orden
 * **__page**: Página filtrada
 * **__limit**: Página filtrada
+
+## Atribuciones:
+Plantilla KaiAdmin: https://themewagon.com/themes/kaiadmin/

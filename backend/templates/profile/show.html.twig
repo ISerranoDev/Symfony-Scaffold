@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html.twig' %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block page_title %}Mi Perfil{% endblock %}
+
+{% block breadcrums %}
+    <ul class="breadcrumbs">
+        <li class="nav-home">
+            <a href="#">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a href="{{ path('app_users_list') }}">Mi Perfil</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+
+    <div class="col-12 row ms-0 me-0 mb-2">
+        <div class="col-6 ">
+        </div>
+
+        <div class="col-6 text-end">
+            <a href="{{ path('app_profile_render_edit') }}" class="btn btn-primary">Editar Perfil</a>
+        </div>
+    </div>
+
+    <div class="card card-flush w-100">
+
+        <!--begin::Card body-->
+        <div class="card-body row">
+
+            <div class="col-6 mb-3">
+                <label>Usuario <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="username" placeholder="Usuario" autocomplete="off" value="{{ app.user.username }}" required readonly>
+                {% include 'extra/error-message.html.twig' with {'name': 'username'} %}
+            </div>
+            <div class="col-6 mb-3">
+                <label>Correo Electrónico <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" name="email" placeholder="Correo Electrónico" autocomplete="off" value="{{ app.user.email }}" required readonly>
+                {% include 'extra/error-message.html.twig' with {'name': 'email'} %}
+            </div>
+
+            <div class="col-4 mb-3">
+                <label>Nombre</label>
+                <input type="text" class="form-control" name="name" placeholder="Nombre" value="{{ app.user.name }}" autocomplete="off" readonly>
+                {% include 'extra/error-message.html.twig' with {'name': 'name'} %}
+            </div>
+
+            <div class="col-4 mb-3">
+                <label>Primer apellido</label>
+                <input type="text" class="form-control" name="surname1" placeholder="Primer Apellido" value="{{ app.user.surname1 }}" autocomplete="off" readonly>
+                {% include 'extra/error-message.html.twig' with {'name': 'surname1'} %}
+            </div>
+
+            <div class="col-4 mb-3">
+                <label>Segundo apellido</label>
+                <input type="text" class="form-control" name="surname2" placeholder="Segundo Apellido" value="{{ app.user.surname2 }}" autocomplete="off" readonly>
+                {% include 'extra/error-message.html.twig' with {'name': 'surname2'} %}
+            </div>
+
+        </div>
+        <!--end::Card body-->
+    </div>
+
+{% endblock %}

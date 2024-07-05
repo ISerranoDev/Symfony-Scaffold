@@ -43,6 +43,7 @@ class SecurityService extends AbstractService
 
     public function login(): Response
     {
+
         if ($this->getUser()) {
              return $this->redirectToRoute('app_dashboard');
         }
@@ -115,13 +116,26 @@ class SecurityService extends AbstractService
             }
 
 
+        }else{
+            $this->addFlash('error', 'El csrf token no es válido');
         }
 
 
         return $this->redirectToRoute('app_login');
     }
 
-    public function recover(): RedirectResponse
+    public function recover(): Response
+    {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_dashboard');
+        }
+
+
+        return $this->render('security/recover.html.twig', [
+        ]);
+    }
+
+    public function recoverProcess(): RedirectResponse
     {
 
         if($this->isCsrfTokenValid('recover-password', $this->getRequest()->request->get('_csrf_token'))){
@@ -164,7 +178,7 @@ class SecurityService extends AbstractService
 
         }
 
-        return $this->redirectToRoute('app_login');
+        return $this->redirectToRoute('app_recover_password_render');
 
     }
 
@@ -199,7 +213,7 @@ class SecurityService extends AbstractService
                 if($password == $repassword){
 
                     if(preg_match('/^(?=(?:.*\d))(?=.*[A-Z])(?=.*[a-z])(?=.*[.,*!?¿¡#$%&])\S{8,64}$/', $password)){
-                        $this->userRepository->upgradePassword($user, $password);
+                        $this->userRepository->upgradePassword($user, $password, true);
                         $this->addFlash('success', 'La contraseña se ha modificado correctamente.');
 
                         return $this->redirectToRoute('app_login');
