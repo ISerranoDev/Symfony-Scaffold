@@ -37,10 +37,16 @@ class SecurityController extends AbstractController
         return $this->securityService->registerProcess($request);
     }
 
-    #[Route(path: '/recuperar-contrasena', name: 'app_recover_password')]
+    #[Route(path: '/recuperar-contrasena', name: 'app_recover_password_render', methods: 'GET')]
     public function recover(): Response
     {
         return $this->securityService->recover();
+    }
+
+    #[Route(path: '/recuperar-contrasena', name: 'app_recover_password_process', methods: 'POST')]
+    public function recoverProcess(): Response
+    {
+        return $this->securityService->recoverProcess();
     }
 
     #[Route(path: '/cambiar-contrasena/{code}', name: 'app_change_password_render', methods: 'GET')]

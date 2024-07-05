@@ -1,8 +1,8 @@
 {% extends 'layouts/base.html.twig' %}
 
-{% block title %}Crear Usuario{% endblock %}
+{% block title %}Editar Perfil{% endblock %}
 
-{% block page_title %}Crear Usuario{% endblock %}
+{% block page_title %}Editar Perfil{% endblock %}
 
 {% block breadcrums %}
     <ul class="breadcrumbs">
@@ -15,13 +15,13 @@
             <i class="icon-arrow-right"></i>
         </li>
         <li class="nav-item">
-            <a href="{{ path('app_users_list') }}">Usuarios</a>
+            <a href="{{ path('app_profile') }}">Mi Perfil</a>
         </li>
         <li class="separator">
             <i class="icon-arrow-right"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Crear Usuario</a>
+            <a href="#">Editar Perfil</a>
         </li>
     </ul>
 {% endblock %}
@@ -33,71 +33,61 @@
         </div>
 
         <div class="col-6 text-end">
-            <a href="{{ path('app_users_list') }}" class="btn btn-secondary">Listado de Usuarios</a>
+            <a href="{{ path('app_profile') }}" class="btn btn-primary">Ver Perfil</a>
         </div>
     </div>
 
     <div class="card card-flush w-100">
-        <form action="{{ path('app_users_process_new') }}" method="post">
+        <form action="{{ path('app_profile_process_edit') }}" method="post">
 
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('create-user') }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('edit-profile') }}">
             <!--begin::Card body-->
             <div class="card-body row">
 
                 <div class="col-6 mb-3">
                     <label>Usuario <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="username" placeholder="Usuario" autocomplete="off" required>
+                    <input type="text" class="form-control" name="username" placeholder="Usuario" autocomplete="off" value="{{ app.user.username }}" required>
                     {% include 'extra/error-message.html.twig' with {'name': 'username'} %}
                 </div>
                 <div class="col-6 mb-3">
                     <label>Correo Electrónico <span class="text-danger">*</span></label>
-                    <input type="email" class="form-control" name="email" placeholder="Correo Electrónico" autocomplete="off" required>
+                    <input type="email" class="form-control" name="email" placeholder="Correo Electrónico" autocomplete="off" value="{{ app.user.email }}" required>
                     {% include 'extra/error-message.html.twig' with {'name': 'email'} %}
                 </div>
                 <div class="col-6 mb-3">
-                    <label>Contraseña <span class="text-danger">*</span></label>
-                    <input type="password" class="form-control" name="password" placeholder="Contraseña" autocomplete="off" required>
+                    <label>Contraseña</label>
+                    <input type="password" class="form-control" name="password" placeholder="Contraseña" autocomplete="off">
                     {% include 'extra/error-message.html.twig' with {'name': 'password'} %}
                 </div>
                 <div class="col-6 mb-3">
-                    <label>Repetir Contraseña <span class="text-danger">*</span></label>
-                    <input type="password" class="form-control" name="re-password" placeholder="Repetir Contraseña" autocomplete="off" required>
+                    <label>Repetir Contraseña</label>
+                    <input type="password" class="form-control" name="re-password" placeholder="Repetir Contraseña" autocomplete="off">
                     {% include 'extra/error-message.html.twig' with {'name': 're-password'} %}
                 </div>
 
                 <div class="col-4 mb-3">
                     <label>Nombre</label>
-                    <input type="text" class="form-control" name="name" placeholder="Nombre" autocomplete="off">
+                    <input type="text" class="form-control" name="name" placeholder="Nombre" value="{{ app.user.name }}" autocomplete="off">
                     {% include 'extra/error-message.html.twig' with {'name': 'name'} %}
                 </div>
 
                 <div class="col-4 mb-3">
                     <label>Primer apellido</label>
-                    <input type="text" class="form-control" name="surname1" placeholder="Primer Apellido" autocomplete="off">
+                    <input type="text" class="form-control" name="surname1" placeholder="Primer Apellido" value="{{ app.user.surname1 }}" autocomplete="off">
                     {% include 'extra/error-message.html.twig' with {'name': 'surname1'} %}
                 </div>
 
                 <div class="col-4 mb-3">
                     <label>Segundo apellido</label>
-                    <input type="text" class="form-control" name="surname2" placeholder="Segundo Apellido" autocomplete="off">
+                    <input type="text" class="form-control" name="surname2" placeholder="Segundo Apellido" value="{{ app.user.surname2 }}" autocomplete="off">
                     {% include 'extra/error-message.html.twig' with {'name': 'surname2'} %}
-                </div>
-
-                <div class="col-6 mb-3">
-                    <label>Roles <span class="text-danger">*</span></label>
-                    <select class="form-control" name="roles[]" data-control="select2" multiple required>
-                        {% for role in roles %}
-                            <option value="{{ role.id }}">{{ role.label }}</option>
-                        {% endfor %}
-                    </select>
-                    {% include 'extra/error-message.html.twig' with {'name': 'roles'} %}
                 </div>
 
             </div>
             <!--end::Card body-->
 
             <div class="card-footer d-flex justify-content-end text-end">
-                <button type="submit" class="btn btn-primary">Crear</button>
+                <button type="submit" class="btn btn-primary">Editar</button>
             </div>
         </form>
     </div>

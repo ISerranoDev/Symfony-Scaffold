@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/sweetalert2.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/flatpickr.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
     {% block stylesheet %}{% endblock %}
 
@@ -52,7 +54,7 @@
         </div>
     </div>
 
-    <footer class="footer ">
+    <footer class="footer " style="position: absolute; bottom: 0;">
         <div class="container-fluid d-flex justify-content-between">
             <nav class="pull-left">
 
@@ -67,6 +69,7 @@
         </div>
     </footer>
 </div>
+
 <!--   Core JS Files   -->
 <script src="{{ asset('assets/js/core/jquery-3.7.1.min.js') }}"></script>
 <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
@@ -80,11 +83,59 @@
 <script src="{{ asset('assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 
 <!-- Sweet Alert -->
-<script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+<script src="{{ asset('assets/js/plugin/sweetalert/sweetalert2.all.min.js') }}"></script>
+
+<!-- Select2 -->
+<script src="{{ asset('assets/js/plugin/select2/select2.full.min.js') }}"></script>
+
+<!-- Select2 -->
+<script src="{{ asset('assets/js/plugin/flatpickr/flatpickr.js') }}"></script>
 
 <!-- Kaiadmin JS -->
 <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
 <script src="{{ asset('assets/js/custom.js') }}"></script>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        {% for label, messages in app.flashes %}
+
+        {% set alertColor = '' %}
+        {% set alertIcon = '' %}
+        {% set alertTitle = '' %}
+
+        {% if label == 'success' %}
+        {% set alertColor = 'success' %}
+        {% set alertTitle = 'Correcto' %}
+        {% set alertIcon = 'fa fa-check' %}
+        {% elseif label == 'error' %}
+        {% set alertColor = 'danger' %}
+        {% set alertTitle = 'Error' %}
+        {% set alertIcon = 'fa fa-exclamation' %}
+        {% elseif label == 'warning' %}
+        {% set alertColor = 'warning' %}
+        {% set alertTitle = 'Advertencia' %}
+        {% set alertIcon = 'fa fa-triangle-exclamation' %}
+        {% endif %}
+
+        $.notify({
+            icon: '{{ alertIcon }}',
+            title: '{{ alertTitle }}',
+            message: '{{ messages|join('<br>')|raw }}'
+        }, {
+            type: '{{ alertColor }}',
+            placement: {
+                from: 'top',
+                align: 'right'
+            },
+            time: 1000,
+            delay: 0,
+        });
+        {% endfor %}
+
+    })
+
+</script>
 {% block javascripts %}{% endblock %}
 </body>
 </html>

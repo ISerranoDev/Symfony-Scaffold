@@ -1,0 +1,56 @@
+{% extends 'layouts/base_login.html.twig' %}
+{% block title %}Recuperar contraseña{% endblock %}
+
+{% block content %}
+    <div class="w-100 d-flex row justify-content-center">
+        <div class="col-6">
+            <div class="card mt-50">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3 class="text-center">Recuperar contraseña</h3>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form action="{{ path('app_recover_password_process') }}" method="post">
+                        <input type="hidden" name="_csrf_token"
+                               value="{{ csrf_token('recover-password') }}"
+                        >
+
+                        {% for label, messages in app.flashes %}
+
+                            {% set alertColor = '' %}
+                            {% set alertIcon = '' %}
+                            {% set alertTitle = '' %}
+
+                            {% if label == 'success' %}
+                                {% set alertColor = 'success' %}
+                            {% elseif label == 'error' %}
+                                {% set alertColor = 'danger' %}
+                            {% elseif label == 'warning' %}
+                                {% set alertColor = 'warning' %}
+                            {% endif %}
+
+                            <div class="alert alert-{{ alertColor }}">{{ messages|join('<br>')|raw }}</div>
+                        {% endfor %}
+
+                        <div class="form-group form-group-default">
+                            <label>Email</label>
+                            <input name="email" type="text" class="form-control" placeholder="Correo electrónico">
+                        </div>
+
+
+                        <p class="text-end">
+                            <a  href="{{ path('app_login') }}">¿Ya tiene acceso? Inicie sesión</a>
+                        </p>
+
+                        <button class="w-100 btn btn-primary">Recuperar</button>
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
