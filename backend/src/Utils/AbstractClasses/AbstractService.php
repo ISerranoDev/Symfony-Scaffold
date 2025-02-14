@@ -1,7 +1,6 @@
 <?php
 namespace App\Utils\AbstractClasses;
 
-use App\Utils\Classes\EncryptService;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -26,7 +25,7 @@ use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Environment;
 
-abstract class AbstractService extends EncryptService implements ServiceSubscriberInterface
+abstract class AbstractService implements ServiceSubscriberInterface
 {
 
     private ?ContainerInterface $container = null;

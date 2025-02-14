@@ -1,0 +1,4 @@
+i_serrano_dev_encrypt:
+    hash_key: '%env(resolve:ISD_ENCRYPT_HASH_KEY)%'
+    method: '%env(resolve:ISD_ENCRYPT_METHOD)%'
+    iv: '%env(resolve:ISD_ENCRYPT_IV)%'

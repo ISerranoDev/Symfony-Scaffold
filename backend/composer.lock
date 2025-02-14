@@ -4,8 +4,68 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b06fbc229f38866bef16f880010f935d",
+    "content-hash": "d1286f4e0095838ce1680bfb97c7ef81",
     "packages": [
+        {
+            "name": "beberlei/doctrineextensions",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/DoctrineExtensions.git",
+                "reference": "249eab82aa35b65741388f38499b3162403d9956"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/DoctrineExtensions/zipball/249eab82aa35b65741388f38499b3162403d9956",
+                "reference": "249eab82aa35b65741388f38499b3162403d9956",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "^2.15",
+                "php": "^7.2 || ^8.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^1.14 || ^2",
+                "doctrine/coding-standard": "^9.0.2 || ^12.0",
+                "nesbot/carbon": "*",
+                "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0",
+                "squizlabs/php_codesniffer": "^3.8",
+                "symfony/cache": "^4.4 || ^5.4 || ^6.4 || ^7.0",
+                "symfony/yaml": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "zf1/zend-date": "^1.12",
+                "zf1/zend-registry": "^1.12"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DoctrineExtensions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Steve Lacey",
+                    "email": "steve@steve.ly"
+                }
+            ],
+            "description": "A set of extensions to Doctrine 2 that add support for additional query functions available in MySQL, Oracle, PostgreSQL and SQLite.",
+            "keywords": [
+                "database",
+                "doctrine",
+                "orm"
+            ],
+            "support": {
+                "source": "https://github.com/beberlei/DoctrineExtensions/tree/v1.4.0"
+            },
+            "time": "2024-02-05T17:02:44+00:00"
+        },
         {
             "name": "behat/transliterator",
             "version": "v1.5.0",
@@ -1434,6 +1494,64 @@
                 }
             ],
             "time": "2023-01-14T14:17:03+00:00"
+        },
+        {
+            "name": "iserranodev/encrypt-bundle",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ISerranoDev/Encrypt-Bundle.git",
+                "reference": "c2d888bfa661dfde431c75a2f2c9e6229dfc9ea1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ISerranoDev/Encrypt-Bundle/zipball/c2d888bfa661dfde431c75a2f2c9e6229dfc9ea1",
+                "reference": "c2d888bfa661dfde431c75a2f2c9e6229dfc9ea1",
+                "shasum": ""
+            },
+            "require": {
+                "beberlei/doctrineextensions": "^1.4",
+                "doctrine/doctrine-bundle": "^2.10",
+                "doctrine/doctrine-migrations-bundle": "^3.2",
+                "doctrine/orm": "^2.16",
+                "paragonie/halite": "^5.0",
+                "php": ">=8.1",
+                "symfony/console": "^6.0|^7.0",
+                "symfony/filesystem": "^6.0|^7.0",
+                "symfony/framework-bundle": "^6.0|^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "symfony/phpunit-bridge": "^6.0|^7.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "ISerranoDev\\EncryptBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ismael Serrano López",
+                    "email": "iserrano.developer@gmail.com"
+                }
+            ],
+            "description": "A Symfony bundle for encrypting entity properties in Database",
+            "keywords": [
+                "bundle",
+                "doctrine",
+                "encryption",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/ISerranoDev/Encrypt-Bundle/issues",
+                "source": "https://github.com/ISerranoDev/Encrypt-Bundle/tree/1.0.0"
+            },
+            "time": "2025-02-14T13:10:07+00:00"
         },
         {
             "name": "jeroendesloovere/vcard",

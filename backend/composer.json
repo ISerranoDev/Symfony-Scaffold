@@ -12,6 +12,7 @@
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.16",
+        "iserranodev/encrypt-bundle": "^1.0",
         "jeroendesloovere/vcard": "^1.7",
         "knplabs/knp-paginator-bundle": "^6.2",
         "paragonie/halite": "*",

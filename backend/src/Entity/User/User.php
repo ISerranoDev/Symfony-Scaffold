@@ -9,11 +9,14 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ISerranoDev\EncryptBundle\Attribute\Encrypted;
+use ISerranoDev\EncryptBundle\EventListener\EncryptListener;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
+#[ORM\EntityListeners([EncryptListener::class])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
@@ -76,11 +79,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?DateTime $recoverCodeExpiration;
 
     #[ORM\Column(name:'name', length: 180, unique: false, nullable: true)]
+    #[Encrypted]
     private ?string $name;
 
+    #[Encrypted]
     #[ORM\Column(name:'surname_1', length: 180, unique: false, nullable: true)]
     private ?string $surname1;
 
+    #[Encrypted]
     #[ORM\Column(name:'surname_2', length: 180, unique: false, nullable: true)]
     private ?string $surname2;
 
