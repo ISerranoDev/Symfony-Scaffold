@@ -1493,16 +1493,16 @@
         },
         {
             "name": "iserranodev/encrypt-bundle",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ISerranoDev/Encrypt-Bundle.git",
-                "reference": "c2d888bfa661dfde431c75a2f2c9e6229dfc9ea1"
+                "reference": "4b2619ba81f7e40761403f5b3c8a29547a60155f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ISerranoDev/Encrypt-Bundle/zipball/c2d888bfa661dfde431c75a2f2c9e6229dfc9ea1",
-                "reference": "c2d888bfa661dfde431c75a2f2c9e6229dfc9ea1",
+                "url": "https://api.github.com/repos/ISerranoDev/Encrypt-Bundle/zipball/4b2619ba81f7e40761403f5b3c8a29547a60155f",
+                "reference": "4b2619ba81f7e40761403f5b3c8a29547a60155f",
                 "shasum": ""
             },
             "require": {
@@ -1545,9 +1545,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ISerranoDev/Encrypt-Bundle/issues",
-                "source": "https://github.com/ISerranoDev/Encrypt-Bundle/tree/1.0.0"
+                "source": "https://github.com/ISerranoDev/Encrypt-Bundle/tree/1.1.0"
             },
-            "time": "2025-02-14T13:10:07+00:00"
+            "time": "2025-02-25T08:14:03+00:00"
         },
         {
             "name": "jeroendesloovere/vcard",

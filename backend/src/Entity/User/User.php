@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ISerranoDev\EncryptBundle\Attribute\Encrypted;
+use ISerranoDev\EncryptBundle\Attribute\Hashed;
 use ISerranoDev\EncryptBundle\EventListener\EncryptListener;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -79,15 +80,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?DateTime $recoverCodeExpiration;
 
     #[ORM\Column(name:'name', length: 180, unique: false, nullable: true)]
-    #[Encrypted]
+    #[Hashed]
     private ?string $name;
 
-    #[Encrypted]
     #[ORM\Column(name:'surname_1', length: 180, unique: false, nullable: true)]
+    #[Hashed]
     private ?string $surname1;
 
-    #[Encrypted]
     #[ORM\Column(name:'surname_2', length: 180, unique: false, nullable: true)]
+    #[Hashed]
     private ?string $surname2;
 
     ////////////////////////////////////////////////////////////////
