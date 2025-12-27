@@ -6,13 +6,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -70,12 +70,31 @@ abstract class AbstractService implements ServiceSubscriberInterface
      */
     protected function redirectBack(int $status = 302, array $parameters = [] ): RedirectResponse
     {
-        $urlParams = '';
-        if($parameters){
-            $urlParams = '?' . http_build_query($parameters);
+        $referer = $this->getRequest()->headers->get('referer');
+
+        $parts = parse_url($referer);
+
+        $existingParams = [];
+        if (isset($parts['query'])) {
+            parse_str($parts['query'], $existingParams);
         }
 
-        return new RedirectResponse($this->getRequest()->headers->get('referer') . $urlParams, $status);
+        $mergedParams = array_merge($existingParams, $parameters);
+
+        $baseUrl = '';
+        if (isset($parts['scheme']) && isset($parts['host'])) {
+            $baseUrl = $parts['scheme'].'://'.$parts['host'];
+            if (isset($parts['port'])) {
+                $baseUrl .= ':'.$parts['port'];
+            }
+        }
+        $baseUrl .= $parts['path'] ?? '';
+
+        $queryString = http_build_query($mergedParams);
+
+        $newUrl = $baseUrl . ($queryString ? '?' . $queryString : '');
+
+        return new RedirectResponse($newUrl, $status);
     }
 
     /**
@@ -199,6 +218,16 @@ abstract class AbstractService implements ServiceSubscriberInterface
     protected function getRequest(): Request
     {
         return $this->container->get('request_stack')->getCurrentRequest();
+    }
+
+    protected function getRequestStack(): RequestStack
+    {
+        return $this->container->get('request_stack');
+    }
+
+    public function getSession() : SessionInterface
+    {
+        return $this->container->get('request_stack')->getSession();
     }
 
 

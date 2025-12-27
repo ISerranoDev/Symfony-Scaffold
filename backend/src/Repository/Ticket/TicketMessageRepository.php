@@ -2,14 +2,13 @@
 
 namespace App\Repository\Ticket;
 
-use App\Entity\Log\ImportLog;
 use App\Entity\Ticket\Ticket;
 use App\Entity\Ticket\TicketMessage;
 use App\Entity\User\User;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @extends EntityRepository<ImportLog>
+ * @extends EntityRepository<TicketMessage>
  *
  *
  * @method TicketMessage|null find($id, $lockMode = null, $lockVersion = null)
@@ -31,13 +30,13 @@ class TicketMessageRepository extends EntityRepository
             ->setMessage($message)
         ;
 
-        $this->_em->persist($ticketMessage);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($ticketMessage);
+        $this->getEntityManager()->flush();
     }
 
     public function deleteTicketMessage(TicketMessage $ticketMessage): void
     {
-        $this->_em->remove($ticketMessage);
-        $this->_em->flush();
+        $this->getEntityManager()->remove($ticketMessage);
+        $this->getEntityManager()->flush();
     }
 }

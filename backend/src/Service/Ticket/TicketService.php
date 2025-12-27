@@ -3,6 +3,7 @@
 namespace App\Service\Ticket;
 
 
+use App\Entity\Role\Role;
 use App\Entity\Ticket\Ticket;
 use App\Entity\Ticket\TicketMessage;
 use App\Repository\Ticket\TicketMessageRepository;
@@ -10,7 +11,9 @@ use App\Repository\Ticket\TicketRepository;
 use App\Request\Ticket\ChangeStatusTicketRequest;
 use App\Request\Ticket\CreateTicketMessageRequest;
 use App\Request\Ticket\CreateTicketRequest;
+use App\Request\Ticket\DeleteTicketRequest;
 use App\Request\Ticket\EditTicketRequest;
+use App\Request\Ticket\ShowTicketRequest;
 use App\Utils\AbstractClasses\AbstractService;
 use App\Utils\Classes\FilterService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,24 +24,21 @@ class TicketService extends AbstractService
 
     private \Doctrine\ORM\EntityRepository | TicketRepository $ticketRepository;
     private \Doctrine\ORM\EntityRepository | TicketMessageRepository $ticketMessageRepository;
-    private FilterService $filterService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        FilterService $filterService
+        private readonly FilterService $filterService
     )
     {
         $this->ticketRepository = $entityManager->getRepository(Ticket::class);
         $this->ticketMessageRepository = $entityManager->getRepository(TicketMessage::class);
-
-        $this->filterService = $filterService;
 
     }
 
     public function list(): Response
     {
 
-        if(!$this->getUser()->hasRole('ROLE_ADMIN')){
+        if(!$this->getUser()->hasRole(Role::ROLE_ADMIN)){
 
             $this->filterService->addFilter('user', $this->getUser()->getId());
         }
@@ -49,6 +49,7 @@ class TicketService extends AbstractService
             'tickets' => $tickets,
             'totalTickets' => $tickets->getTotalItemCount(),
             'filterService' => $this->filterService,
+            'lastPage' => ceil($tickets->getTotalItemCount() / $tickets->getItemNumberPerPage())
         ]);
     }
 
@@ -58,11 +59,11 @@ class TicketService extends AbstractService
         ]);
     }
 
-    public function renderEdit(int $ticketId): Response
+    public function renderEdit(ShowTicketRequest $request): Response
     {
-        $ticket = $this->ticketRepository->find($ticketId);
+        $ticket = $this->ticketRepository->find($request->getAttribute('id'));
 
-        if(!$this->getUser()->hasRole('ROLE_ADMIN') && $ticket->getUser()->getId() != $this->getUser()->getId()){
+        if(!$this->getUser()->hasRole(Role::ROLE_ADMIN) && $ticket->getUser()->getId() != $this->getUser()->getId()){
             $this->addFlash('error', 'no tienes permiso para editar esta incidencia');
             return $this->redirectBack();
         }
@@ -72,12 +73,12 @@ class TicketService extends AbstractService
         ]);
     }
 
-    public function show(int $ticketId): Response
+    public function show(ShowTicketRequest $request): Response
     {
 
-        $ticket = $this->ticketRepository->find($ticketId);
+        $ticket = $this->ticketRepository->find($request->getAttribute('id'));
 
-        if(!$this->getUser()->hasRole('ROLE_ADMIN') && $ticket->getUser()->getId() != $this->getUser()->getId()){
+        if(!$this->getUser()->hasRole(Role::ROLE_ADMIN) && $ticket->getUser()->getId() != $this->getUser()->getId()){
             $this->addFlash('error', 'no tienes permiso para ver esta incidencia');
             return $this->redirectBack();
         }
@@ -89,133 +90,91 @@ class TicketService extends AbstractService
 
     public function processNew(CreateTicketRequest $request): Response
     {
-        if(!$request->isValid()){
-            $this->addFlash('error', 'No se ha podido crear la incidencia');
-            return $this->redirectToRoute('app_tickets_render_new', ['errors' => $request->getErrors()]);
-        }
 
-        if($this->isCsrfTokenValid('create-ticket', $this->getRequest()->request->get('_csrf_token'))){
+        $this->ticketRepository->createTicket(
+            $this->getUser(),
+            $request->getAttribute('title'),
+            $request->getAttribute('description')
+        );
 
-            $this->ticketRepository->createTicket(
-                $this->getUser(),
-                $request->getAttribute('title'),
-                $request->getAttribute('description')
-            );
-
-            $this->addFlash('success', 'Se ha creado la incidencia satisfactoriamente');
-
-        }else{
-            $this->addFlash('error', 'El csrf token no es válido');
-        }
+        $this->addFlash('success', 'Se ha creado la incidencia satisfactoriamente');
 
         return $this->redirectToRoute('app_tickets_list');
     }
 
-    public function processEdit(int $ticketId, EditTicketRequest $request): Response
+    public function processEdit(EditTicketRequest $request): Response
     {
-        if(!$request->isValid()){
-            $this->addFlash('error', 'No se ha podido editar la incidencia');
-            return $this->redirectToRoute('app_tickets_render_edit', ['id' => $ticketId, 'errors' => $request->getErrors()]);
-        }
 
-        $ticket = $this->ticketRepository->find($ticketId);
+        $ticket = $this->ticketRepository->find($request->getAttribute('id'));
 
-        if(!$this->getUser()->hasRole('ROLE_ADMIN') && $ticket->getUser()->getId() != $this->getUser()->getId()){
+        if(!$this->getUser()->hasRole(Role::ROLE_ADMIN) && $ticket->getUser()->getId() != $this->getUser()->getId()){
             $this->addFlash('error', 'No tienes permiso para ver esta incidencia');
             return $this->redirectBack();
         }
 
-        if($this->isCsrfTokenValid('edit-ticket', $this->getRequest()->request->get('_csrf_token'))){
+        $this->ticketRepository->editTicket(
+            $ticket,
+            $request->getAttribute('title'),
+            $request->getAttribute('description')
+        );
 
-            $this->ticketRepository->editTicket(
-                $ticket,
-                $request->getAttribute('title'),
-                $request->getAttribute('description')
-            );
-
-            $this->addFlash('success', 'Se ha editado la incidencia satisfactoriamente');
-
-        }else{
-            $this->addFlash('error', 'El csrf token no es válido');
-        }
+        $this->addFlash('success', 'Se ha editado la incidencia satisfactoriamente');
 
         return $this->redirectToRoute('app_tickets_list');
     }
 
-    public function changeStatus(int $ticketId, ChangeStatusTicketRequest $request): Response
+    public function changeStatus(ChangeStatusTicketRequest $request): Response
     {
-        if(!$request->isValid()){
-            $this->addFlash('error', 'No se ha podido cambiar el estado de la incidencia');
-            return $this->redirectBack(302, ['errors' => $request->getErrors()]);
-        }
 
-        $ticket = $this->ticketRepository->find($ticketId);
+        $ticket = $this->ticketRepository->find($request->getAttribute('id'));
 
+        $this->ticketRepository->changeStatusTicket(
+            $ticket,
+            $request->getAttribute('closed')
+        );
 
-        if($this->isCsrfTokenValid('change-status-ticket', $this->getRequest()->request->get('_csrf_token'))){
-
-            $this->ticketRepository->changeStatusTicket(
-                $ticket,
-                $request->getAttribute('closed')
-            );
-
-            $this->addFlash('success', 'Se ha cambiado el estado de la incidencia satisfactoriamente');
-
-        }else{
-            $this->addFlash('error', 'El csrf token no es válido');
-        }
+        $this->addFlash('success', 'Se ha cambiado el estado de la incidencia satisfactoriamente');
 
         return $this->redirectBack();
     }
 
-    public function createMessage(int $ticketId, CreateTicketMessageRequest $request): Response
+    public function createMessage(CreateTicketMessageRequest $request): Response
     {
-        if(!$request->isValid()){
-            $this->addFlash('error', 'No se ha podido crear el mensaje');
-            return $this->redirectToRoute('app_tickets_render_show', ['id' => $ticketId, 'errors' => $request->getErrors()]);
-        }
 
-        $ticket = $this->ticketRepository->find($ticketId);
+        $ticket = $this->ticketRepository->find($request->getAttribute('id'));
 
-        if(!$this->getUser()->hasRole('ROLE_ADMIN') && $ticket->getUser()->getId() != $this->getUser()->getId()){
+        if(!$this->getUser()->hasRole(Role::ROLE_ADMIN) && $ticket->getUser()->getId() != $this->getUser()->getId()){
             $this->addFlash('error', 'No tienes permiso para crear un mensaje en esta incidencia');
             return $this->redirectBack();
         }
 
-        if($this->isCsrfTokenValid('create-ticket-message', $this->getRequest()->request->get('_csrf_token'))){
+        $this->ticketMessageRepository->createTicketMessage(
+            $ticket,
+            $this->getUser(),
+            $request->getAttribute('message')
+        );
 
-            $this->ticketMessageRepository->createTicketMessage(
-                $ticket,
-                $this->getUser(),
-                $request->getAttribute('message')
-            );
+        $this->addFlash('success', 'Se ha creado el mensaje satisfactoriamente');
 
-            $this->addFlash('success', 'Se ha creado el mensaje satisfactoriamente');
-
-        }
 
         return $this->redirectToRoute('app_tickets_render_show', ['id' => $ticket->getId()]);
     }
 
-    public function delete(int $ticketId): Response
+    public function delete(DeleteTicketRequest $request): Response
     {
 
-        $ticket = $this->ticketRepository->find($ticketId);
+        $ticket = $this->ticketRepository->find($request->getAttribute('id'));
 
-        if(!$this->getUser()->hasRole('ROLE_ADMIN') && $ticket->getUser()->getId() != $this->getUser()->getId()){
+        if(!$this->getUser()->hasRole(Role::ROLE_ADMIN) && $ticket->getUser()->getId() != $this->getUser()->getId()){
             $this->addFlash('error', 'No tienes permiso para eliminar incidencia');
             return $this->redirectBack();
         }
 
-        if($this->isCsrfTokenValid('delete-ticket', $this->getRequest()->request->get('_csrf_token'))){
+        $this->ticketRepository->deleteTicket(
+            $ticket
+        );
 
-            $this->ticketRepository->deleteTicket(
-                $ticket
-            );
-
-            $this->addFlash('success', 'Se ha eliminado la incidencia satisfactoriamente');
-
-        }
+        $this->addFlash('success', 'Se ha eliminado la incidencia satisfactoriamente');
 
         return $this->redirectToRoute('app_tickets_list');
     }

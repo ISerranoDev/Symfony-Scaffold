@@ -2,22 +2,18 @@
 
 namespace App\Repository\Ticket;
 
-use App\Entity\Log\ImportLog;
 use App\Entity\Ticket\Ticket;
 use App\Entity\User\User;
 use App\Utils\Classes\FilterService;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
 /**
- * @extends EntityRepository<ImportLog>
+ * @extends ServiceEntityRepository<Ticket>
  *
  *
  * @method Ticket|null find($id, $lockMode = null, $lockVersion = null)
@@ -28,14 +24,11 @@ use Knp\Component\Pager\PaginatorInterface;
 class TicketRepository extends ServiceEntityRepository
 {
 
-    private PaginatorInterface $paginator;
-
     public function __construct(
         ManagerRegistry $registry,
-        PaginatorInterface $paginator
+        private readonly PaginatorInterface $paginator
     )
     {
-        $this->paginator = $paginator;
         parent::__construct($registry, Ticket::class);
     }
 
@@ -131,8 +124,8 @@ class TicketRepository extends ServiceEntityRepository
             ->setDescription($description)
         ;
 
-        $this->_em->persist($ticket);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($ticket);
+        $this->getEntityManager()->flush();
     }
 
     public function editTicket(
@@ -146,8 +139,8 @@ class TicketRepository extends ServiceEntityRepository
             ->setDescription($description)
         ;
 
-        $this->_em->persist($ticket);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($ticket);
+        $this->getEntityManager()->flush();
     }
 
     public function changeStatusTicket(Ticket $ticket, bool $closed): void
@@ -160,14 +153,14 @@ class TicketRepository extends ServiceEntityRepository
             $ticket->setClosedAt(new DateTime());
         }
 
-        $this->_em->persist($ticket);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($ticket);
+        $this->getEntityManager()->flush();
     }
 
     public function deleteTicket(Ticket $ticket): void
     {
-        $this->_em->remove($ticket);
-        $this->_em->flush();
+        $this->getEntityManager()->remove($ticket);
+        $this->getEntityManager()->flush();
     }
 
 }

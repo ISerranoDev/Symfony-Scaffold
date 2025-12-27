@@ -15,7 +15,7 @@
             <i class="icon-arrow-right"></i>
         </li>
         <li class="nav-item">
-            <a href="{{ path('app_users_list') }}">Usuarios</a>
+            <a href="{{ path('admin_users_list') }}">Usuarios</a>
         </li>
         <li class="separator">
             <i class="icon-arrow-right"></i>
@@ -33,33 +33,28 @@
         </div>
 
         <div class="col-6 text-end">
-            <a href="{{ path('app_users_list') }}" class="btn btn-secondary">Listado de Usuarios</a>
+            <a href="{{ path('admin_users_list') }}" class="btn btn-secondary">Listado de Usuarios</a>
         </div>
     </div>
 
     <div class="card card-flush w-100">
-        <form action="{{ path('app_users_process_new') }}" method="post">
+        <form action="{{ path('admin_users_process_new') }}" method="post">
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('create-user') }}">
             <!--begin::Card body-->
             <div class="card-body row">
 
                 <div class="col-6 mb-3">
-                    <label>Usuario <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="username" placeholder="Usuario" autocomplete="off" required>
-                    {% include 'extra/error-message.html.twig' with {'name': 'username'} %}
-                </div>
-                <div class="col-6 mb-3">
                     <label>Correo Electrónico <span class="text-danger">*</span></label>
                     <input type="email" class="form-control" name="email" placeholder="Correo Electrónico" autocomplete="off" required>
                     {% include 'extra/error-message.html.twig' with {'name': 'email'} %}
                 </div>
-                <div class="col-6 mb-3">
+                <div class="col-3 mb-3">
                     <label>Contraseña <span class="text-danger">*</span></label>
                     <input type="password" class="form-control" name="password" placeholder="Contraseña" autocomplete="off" required>
                     {% include 'extra/error-message.html.twig' with {'name': 'password'} %}
                 </div>
-                <div class="col-6 mb-3">
+                <div class="col-3 mb-3">
                     <label>Repetir Contraseña <span class="text-danger">*</span></label>
                     <input type="password" class="form-control" name="re-password" placeholder="Repetir Contraseña" autocomplete="off" required>
                     {% include 'extra/error-message.html.twig' with {'name': 're-password'} %}

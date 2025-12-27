@@ -3,20 +3,22 @@
 namespace App\Controller\Security;
 
 
+use App\Request\Security\ChangePasswordRequest;
+use App\Request\Security\RecoverRequest;
 use App\Request\Security\RegisterRequest;
 use App\Service\Security\SecurityService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SecurityController extends AbstractController
 {
 
-    private SecurityService $securityService;
 
-    public function __construct(SecurityService $securityService)
+    public function __construct(
+        private readonly SecurityService $securityService
+    )
     {
-        $this->securityService = $securityService;
     }
 
     #[Route(path: '/iniciar-sesion', name: 'app_login')]
@@ -44,9 +46,9 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/recuperar-contrasena', name: 'app_recover_password_process', methods: 'POST')]
-    public function recoverProcess(): Response
+    public function recoverProcess(RecoverRequest $request): Response
     {
-        return $this->securityService->recoverProcess();
+        return $this->securityService->recoverProcess($request);
     }
 
     #[Route(path: '/cambiar-contrasena/{code}', name: 'app_change_password_render', methods: 'GET')]
@@ -56,9 +58,9 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/cambiar-contrasena/{code}', name: 'app_change_password_process', methods: 'POST')]
-    public function changePasswordProcess(): Response
+    public function changePasswordProcess(ChangePasswordRequest $request): Response
     {
-        return $this->securityService->changePasswordProcess();
+        return $this->securityService->changePasswordProcess($request);
     }
 
     #[Route(path: '/cerrar-sesion', name: 'app_logout')]

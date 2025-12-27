@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Role\Role;
 use App\Entity\User\User;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
@@ -19,6 +20,7 @@ class UserChecker implements UserCheckerInterface
             // the message passed to this exception is meant to be displayed to the user
             throw new CustomUserMessageAccountStatusException('Tu cuenta ya no está disponible.');
         }
+
     }
 
     public function checkPostAuth(UserInterface $user): void

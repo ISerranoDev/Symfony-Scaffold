@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Role
 {
 
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_USER = 'ROLE_USER';
+
     ////////////////////////////////////////////////////////////////
     /// Primary Key
     ////////////////////////////////////////////////////////////////
@@ -26,17 +29,17 @@ class Role
     /// Relationships
     ////////////////////////////////////////////////////////////////
 
-    #[ORM\OneToMany(mappedBy: 'role', targetEntity: UserHasRole::class)]
+    #[ORM\OneToMany(targetEntity: UserHasRole::class, mappedBy: 'role')]
     private Collection $users;
 
     ////////////////////////////////////////////////////////////////
     /// Fields
     ////////////////////////////////////////////////////////////////
 
-    #[ORM\Column(name:'name', length: 180, unique: true, nullable: false)]
+    #[ORM\Column(name:'nombre', length: 180, unique: true, nullable: false)]
     private string $name;
 
-    #[ORM\Column(name:'label', length: 180, unique: true, nullable: false)]
+    #[ORM\Column(name:'etiqueta', length: 180, unique: true, nullable: false)]
     private string $label;
 
     ////////////////////////////////////////////////////////////////
@@ -117,7 +120,4 @@ class Role
         $this->users = $users;
         return $this;
     }
-
-
-
 }

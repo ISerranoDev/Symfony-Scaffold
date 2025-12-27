@@ -35,7 +35,6 @@
         <div class="col-6 text-end">
             <a href="{{ path('app_tickets_list') }}" class="btn btn-secondary">Listado de Incidencias</a>
             <a href="#" onclick="document.getElementById('change_status_ticket_{{ ticket.id }}_form').submit()" class="btn btn-primary">{% if ticket.closed %}Reabrir{% else %}Cerrar{% endif %} Incidencia</a>
-            <a href="{{ path('app_tickets_render_edit', {'id': ticket.id}) }}" class="btn btn-primary">Editar Incidencia</a>
         </div>
 
         <form id="change_status_ticket_{{ ticket.id }}_form" method="post" action="{{ path('app_tickets_change_status', {'id': ticket.id}) }}" class="d-none">
@@ -46,27 +45,36 @@
 
     <div class="card card-flush w-100">
 
-        <!--begin::Card body-->
-        <div class="card-body row">
+        <form action="{{ path('app_tickets_process_edit', {'id': ticket.id}) }}" method="post">
 
-            <div class="col-12 mb-3">
-                <label>Estado <span class="text-danger">*</span></label><br>
-                <span class="badge badge-{% if ticket.closed %}secondary{% else %}success{% endif%} fw-bold px-4 py-3">{% if ticket.closed %}Cerrada{% else %}Abierta{% endif%}</span>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('edit-ticket') }}">
+            <!--begin::Card body-->
+            <div class="card-body row">
+
+                <div class="col-12 mb-3">
+                    <label>Estado <span class="text-danger">*</span></label><br>
+                    <span class="badge badge-{% if ticket.closed %}secondary{% else %}success{% endif%} fw-bold px-4 py-3">{% if ticket.closed %}Cerrada{% else %}Abierta{% endif%}</span>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label>Título <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" name="title" placeholder="Título de la incidencia" value="{{ ticket.title }}" autocomplete="off" required>
+                    {% include 'extra/error-message.html.twig' with {'name': 'title'} %}
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label>Descripción de Incidencia <span class="text-danger">*</span></label>
+                    <textarea class="form-control" name="description" placeholder="Incidencia" autocomplete="off" required oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'" >{{ ticket.description }}</textarea>
+                    {% include 'extra/error-message.html.twig' with {'name': 'description'} %}
+                </div>
+
             </div>
+            <!--end::Card body-->
 
-            <div class="col-12 mb-3">
-                <label>Título <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="title" placeholder="Título de la incidencia" value="{{ ticket.title }}" autocomplete="off" required readonly>
-                {% include 'extra/error-message.html.twig' with {'name': 'title'} %}
+            <div class="card-footer d-flex justify-content-end text-end">
+                <button type="submit" class="btn btn-primary">Editar</button>
             </div>
-
-            <div class="col-12 mb-3">
-                <label>Descripción de Incidencia <span class="text-danger">*</span></label>
-                <textarea class="form-control overflow-hidden" id="description-input" name="description" contenteditable placeholder="Incidencia" autocomplete="off" readonly required >{{ ticket.description }}</textarea>
-                {% include 'extra/error-message.html.twig' with {'name': 'description'} %}
-            </div>
-
-        </div>
+        </form>
     </div>
 
 {% endblock %}

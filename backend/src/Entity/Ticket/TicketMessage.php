@@ -7,6 +7,7 @@ use App\Entity\User\User;
 use App\Repository\Ticket\TicketMessageRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Doctrine\UlidGenerator;
 
 #[ORM\Entity(repositoryClass: TicketMessageRepository::class)]
 #[ORM\Table(name: 'ticket_messages')]
@@ -18,9 +19,10 @@ class TicketMessage
     ////////////////////////////////////////////////////////////////
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Column(type: 'string', length: 50, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
+    private string $id;
 
     ////////////////////////////////////////////////////////////////
     /// Relationships
@@ -31,17 +33,17 @@ class TicketMessage
     private Ticket $ticket;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ticketMessages')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'usuario_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private User $user;
 
     ////////////////////////////////////////////////////////////////
     /// Fields
     ////////////////////////////////////////////////////////////////
 
-    #[ORM\Column(name:'message', type:'text', nullable: false)]
+    #[ORM\Column(name:'mensaje', type:'text', nullable: false)]
     private string $message;
 
-    #[ORM\Column(name:'created_at', type:'datetime', nullable: false)]
+    #[ORM\Column(name:'fecha_creacion', type:'datetime', nullable: false)]
     private DateTime $createdAt;
 
     ////////////////////////////////////////////////////////////////
@@ -71,7 +73,7 @@ class TicketMessage
         return $this;
     }
 
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
@@ -129,6 +131,4 @@ class TicketMessage
         $this->createdAt = $createdAt;
         return $this;
     }
-
-
 }

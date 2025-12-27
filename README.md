@@ -1,7 +1,7 @@
 ## Especificaciones
 
 * PHP 8.2
-* Symfony 6.4
+* Symfony 7.4
 
 
 ## Primera Instancia del Proyecto

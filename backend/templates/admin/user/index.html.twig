@@ -2,7 +2,7 @@
 
 {% block title %}Usuarios{% endblock %}
 
-{% block page_title %}Usuarios ({{ totalUsers }}){% endblock %}
+{% block page_title %}Usuarios ({{ totalResults }}){% endblock %}
 
 {% block breadcrums %}
     <ul class="breadcrumbs">
@@ -15,7 +15,7 @@
             <i class="icon-arrow-right"></i>
         </li>
         <li class="nav-item">
-            <a href="{{ path('app_users_list') }}">Usuarios</a>
+            <a href="{{ path('admin_users_list') }}">Usuarios</a>
         </li>
     </ul>
 {% endblock %}
@@ -24,10 +24,6 @@
 
     <div class="d-flex row align-content-start mb-2">
         <form id="filter_form" class="d-none"></form>
-        <div class="col-3 align-items-center position-relative mt-2 mb-2">
-            <label>Nombre de Usuario</label>
-            <input type="text" form="filter_form" value="{{ filterService.getFilter('username') }}" name="{{ filterService.renderFieldName('username') }}" class="form-control" placeholder="Usuario">
-        </div>
 
         <div class="col-3 align-items-center position-relative mt-2 mb-2">
             <label>Email</label>
@@ -59,7 +55,7 @@
             </div>
 
             <div class="col-6 text-end">
-                <a href="{{ path('app_users_render_new') }}" class="btn btn-primary">Crear Usuario</a>
+                <a href="{{ path('admin_users_render_new') }}" class="btn btn-primary">Crear Usuario</a>
             </div>
         </div>
 
@@ -77,9 +73,9 @@
                     <thead class="fs-7 text-gray-700 text-uppercase">
                     <tr>
                         <th class="min-w-150px">
-                            <a href="{{ filterService.orderBy('username', filterService.getInversedOrder('username')) }}" >
+                            <a href="{{ filterService.orderBy('email', filterService.getInversedOrder('email')) }}" >
                                 Usuario
-                                {% if filterService.isOrdered('username') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('username') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
+                                {% if filterService.isOrdered('email') %}<i class="ki-outline fs-2 ki-arrow-{{ filterService.getOrder('email') == 'ASC' ? 'up' : 'down' }}"></i>{% endif %}
                             </a>
                         </th>
                         <th class="">
@@ -106,8 +102,7 @@
                                 <div class="d-flex align-items-center">
                                     <!--begin::Info-->
                                     <div class="d-flex flex-column justify-content-center">
-                                        <a href="" class="mb-1 text-gray-800 text-hover-primary">{{ user.username }}</a>
-                                        <div class="fw-semibold fs-6 text-gray-400">{{ user.email }}</div>
+                                        <a href="" class="mb-1 text-gray-800 text-hover-primary">{{ user.email }}</a>
                                     </div>
                                     <!--end::Info-->
                                 </div>
@@ -126,11 +121,10 @@
                                 {% endif %}
                             </td>
                             <td class="text-end">
-                                <a href="{{ path('app_users_render_show', {'id': user.id}) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Ver detalles"><i class="fas fa-eye fs-5"></i></a>
-                                <a href="{{ path('app_users_render_edit', {'id': user.id}) }}" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" title="Editar"><i class="fa fa-user-edit fs-5"></i></a>
+                                <a href="{{ path('admin_users_render_show', {'id': user.id}) }}" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Ver detalles"><i class="fas fa-eye fs-5"></i></a>
                                 <a onclick="triggerForm('delete_user_{{ user.id }}_form')" href="#" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Eliminar"><i class="fa fa-trash fs-5"></i></a>
 
-                                <form id="delete_user_{{ user.id }}_form" method="post" action="{{ path('app_users_delete', {'id': user.id}) }}" class="d-none">
+                                <form id="delete_user_{{ user.id }}_form" method="post" action="{{ path('admin_users_delete', {'id': user.id}) }}" class="d-none">
                                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('delete-user') }}">
                                 </form>
                             </td>

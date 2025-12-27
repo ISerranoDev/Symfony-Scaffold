@@ -9,6 +9,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Doctrine\UlidGenerator;
 
 #[ORM\Entity(repositoryClass: TicketRepository::class)]
 #[ORM\Table(name: 'tickets')]
@@ -20,38 +21,39 @@ class Ticket
     ////////////////////////////////////////////////////////////////
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Column(type: 'string', length: 50, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
+    private string $id;
 
     ////////////////////////////////////////////////////////////////
     /// Relationships
     ////////////////////////////////////////////////////////////////
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'tickets')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'usuario_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     private ?User $user;
 
-    #[ORM\OneToMany(mappedBy: 'ticket', targetEntity: TicketMessage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: TicketMessage::class, mappedBy: 'ticket', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $messages;
 
     ////////////////////////////////////////////////////////////////
     /// Fields
     ////////////////////////////////////////////////////////////////
 
-    #[ORM\Column(name:'title', type: 'text', unique: false, nullable: false)]
+    #[ORM\Column(name:'titulo', type: 'text', unique: false, nullable: false)]
     private string $title;
 
-    #[ORM\Column(name:'message', type:'text', nullable: false)]
+    #[ORM\Column(name:'descripcion', type:'text', nullable: false)]
     private string $description;
 
-    #[ORM\Column(name:'closed', type:'boolean', nullable: false, options: ['default' => false])]
+    #[ORM\Column(name:'cerrado', type:'boolean', nullable: false, options: ['default' => false])]
     private bool $closed;
 
-    #[ORM\Column(name:'created_at', type:'datetime', nullable: false)]
+    #[ORM\Column(name:'fecha_creacion', type:'datetime', nullable: false)]
     private DateTime $createdAt;
 
-    #[ORM\Column(name:'closed_at', type:'datetime', nullable: true)]
+    #[ORM\Column(name:'fecha_cerrado', type:'datetime', nullable: true)]
     private ?DateTime $closedAt;
 
     ////////////////////////////////////////////////////////////////
@@ -66,7 +68,7 @@ class Ticket
     }
 
 
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
@@ -196,7 +198,4 @@ class Ticket
         $this->closedAt = $closedAt;
         return $this;
     }
-
-
-
 }

@@ -6,21 +6,23 @@ namespace App\Controller\Ticket;
 use App\Request\Ticket\ChangeStatusTicketRequest;
 use App\Request\Ticket\CreateTicketMessageRequest;
 use App\Request\Ticket\CreateTicketRequest;
+use App\Request\Ticket\DeleteTicketRequest;
 use App\Request\Ticket\EditTicketRequest;
+use App\Request\Ticket\ShowTicketRequest;
 use App\Service\Ticket\TicketService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/incidencias')]
 class TicketController extends AbstractController
 {
 
-    private TicketService $ticketService;
 
-    public function __construct(TicketService $ticketService)
+    public function __construct(
+        private readonly TicketService $ticketService
+    )
     {
-        $this->ticketService = $ticketService;
     }
 
     #[Route(path: '/', name: 'app_tickets_list')]
@@ -30,9 +32,9 @@ class TicketController extends AbstractController
     }
 
     #[Route(path: '/ver-detalles/{id}', name: 'app_tickets_render_show', methods: 'GET')]
-    public function renderShow(int $id): Response
+    public function renderShow(ShowTicketRequest $request): Response
     {
-        return $this->ticketService->show($id);
+        return $this->ticketService->show($request);
     }
 
     #[Route(path: '/nueva', name: 'app_tickets_render_new', methods: 'GET')]
@@ -47,34 +49,28 @@ class TicketController extends AbstractController
         return $this->ticketService->processNew($request);
     }
 
-    #[Route(path: '/editar/{id}', name: 'app_tickets_render_edit', methods: 'GET')]
-    public function renderEdit(int $id): Response
-    {
-        return $this->ticketService->renderEdit($id);
-    }
-
     #[Route(path: '/editar/{id}', name: 'app_tickets_process_edit', methods: 'POST')]
-    public function processEdit(int $id, EditTicketRequest $request): Response
+    public function processEdit(EditTicketRequest $request): Response
     {
-        return $this->ticketService->processEdit($id, $request);
+        return $this->ticketService->processEdit($request);
     }
 
     #[Route(path: '/cambiar-estado/{id}', name: 'app_tickets_change_status', methods: 'POST')]
-    public function closeTicket(int $id, ChangeStatusTicketRequest $request): Response
+    public function closeTicket(ChangeStatusTicketRequest $request): Response
     {
-        return $this->ticketService->changeStatus($id, $request);
+        return $this->ticketService->changeStatus($request);
     }
 
     #[Route(path: '/{id}/crear-mensaje', name: 'app_tickets_create_message', methods: 'POST')]
-    public function createMessage(int $id, CreateTicketMessageRequest $request): Response
+    public function createMessage(CreateTicketMessageRequest $request): Response
     {
-        return $this->ticketService->createMessage($id, $request);
+        return $this->ticketService->createMessage($request);
     }
 
     #[Route(path: '/eliminar/{id}', name: 'app_tickets_delete', methods: 'POST')]
-    public function delete(int $id): Response
+    public function delete(DeleteTicketRequest $request): Response
     {
-        return $this->ticketService->delete($id);
+        return $this->ticketService->delete($request);
     }
 
 

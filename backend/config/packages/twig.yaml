@@ -1,8 +1,9 @@
 twig:
-    default_path: '%kernel.project_dir%/templates'
+    file_name_pattern: '*.twig'
 
     globals:
         app_name: '%env(APP_NAME)%'
+        #adobe_client_id: '%env(ADOBE_CLIENT_ID)%'
 
 when@dev:
     twig:

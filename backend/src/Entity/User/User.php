@@ -2,22 +2,25 @@
 
 namespace App\Entity\User;
 
+use App\Attribute\LoggedEntity;
+use App\Entity\Role\Role;
 use App\Entity\Ticket\Ticket;
 use App\Entity\Ticket\TicketMessage;
+use App\EventListener\EntityLogListener;
 use App\Repository\User\UserRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use ISerranoDev\EncryptBundle\Attribute\Encrypted;
 use ISerranoDev\EncryptBundle\Attribute\Hashed;
-use ISerranoDev\EncryptBundle\EventListener\EncryptListener;
+use ISerranoDev\EncryptBundle\EventListener\HashListener;
+use App\Doctrine\UlidGenerator;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'users')]
-#[ORM\EntityListeners([EncryptListener::class])]
+#[ORM\Table(name: 'usuario')]
+#[ORM\EntityListeners([HashListener::class])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
@@ -26,22 +29,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ////////////////////////////////////////////////////////////////
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Column(type: 'string', length: 50, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
+    private string $id;
 
     ////////////////////////////////////////////////////////////////
     /// Relationships
     ////////////////////////////////////////////////////////////////
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserHasRole::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'usuario_modificado_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?User $updatedUser;
+
+    #[ORM\OneToMany(targetEntity: UserHasRole::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $roles;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Ticket::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Ticket::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $tickets;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: TicketMessage::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: TicketMessage::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $ticketMessages;
 
@@ -49,45 +57,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /// Fields
     ////////////////////////////////////////////////////////////////
 
-    #[ORM\Column(name:'username', length: 180, unique: true, nullable: false)]
-    private string $username;
-
-    #[ORM\Column(name:'email', length: 180, unique: true, nullable: false)]
+    #[ORM\Column(name:'email', length: 255, unique: true, nullable: false)]
     private string $email;
 
     /**
      * @var string The hashed password
      */
-    #[ORM\Column(name:'password', nullable: false)]
+    #[ORM\Column(name:'contrasena', nullable: false)]
     private string $password;
 
-    #[ORM\Column(name:'enabled', nullable: false, options: ["default" => true])]
+    #[ORM\Column(name:'activo', nullable: false, options: ["default" => true])]
     private bool $enabled;
 
-    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: false)]
+    #[ORM\Column(name: 'fecha_creacion', type: 'datetime', nullable: false)]
     private DateTime $createdAt;
 
-    #[ORM\Column(name: 'entry_date', type: 'datetime', nullable: true)]
+    #[ORM\Column(name: 'fecha_alta', type: 'datetime', nullable: true)]
     private ?DateTime $entryDate;
 
-    #[ORM\Column(name: 'leaving_date', type: 'datetime', nullable: true)]
+    #[ORM\Column(name: 'fecha_baja', type: 'datetime', nullable: true)]
     private ?DateTime $leavingDate;
 
-    #[ORM\Column(name:'recover_code', nullable: true)]
+    #[ORM\Column(name:'codigo_recuperacion', nullable: true)]
     private ?string $recoverCode;
 
-    #[ORM\Column(name: 'recover_expiration_date', type: 'datetime', nullable: true)]
+    #[ORM\Column(name: 'fecha_expiracion_recuperacion', type: 'datetime', nullable: true)]
     private ?DateTime $recoverCodeExpiration;
 
-    #[ORM\Column(name:'name', length: 180, unique: false, nullable: true)]
+    #[ORM\Column(name:'nombre', type: 'text', unique: false, nullable: true)]
     #[Hashed]
     private ?string $name;
 
-    #[ORM\Column(name:'surname_1', length: 180, unique: false, nullable: true)]
+    #[ORM\Column(name:'apellido_1', type: 'text', unique: false, nullable: true)]
     #[Hashed]
     private ?string $surname1;
 
-    #[ORM\Column(name:'surname_2', length: 180, unique: false, nullable: true)]
+    #[ORM\Column(name:'apellido_2', type: 'text', unique: false, nullable: true)]
     #[Hashed]
     private ?string $surname2;
 
@@ -106,7 +111,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
@@ -140,31 +145,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return string
-     */
-    public function getUsername(): string
-    {
-        return $this->username;
-    }
-
-    /**
-     * @param string $username
-     * @return User
-     */
-    public function setUsername(string $username): User
-    {
-        $this->username = $username;
-        return $this;
-    }
-
-    /**
      * A visual identifier that represents this user.
      *
      * @see UserInterface
      */
     public function getUserIdentifier(): string
     {
-        return $this->username;
+        return $this->email;
     }
 
     /**
@@ -182,7 +169,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function hasRole(string $role){
+    public function hasRole(string $role): bool
+    {
         return in_array($role, $this->getRoles());
     }
 
@@ -448,9 +436,68 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return User|null
+     */
+    public function getUpdatedUser(): ?User
+    {
+        return $this->updatedUser;
+    }
 
+    /**
+     * @param User|null $updatedUser
+     * @return User
+     */
+    public function setUpdatedUser(?User $updatedUser): User
+    {
+        $this->updatedUser = $updatedUser;
+        return $this;
+    }
 
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(Role::ROLE_ADMIN);
+    }
 
+    public function getFullName()
+    {
+        $fullName = '';
 
+        if($this->getName()){
+            $fullName .= $this->getName();
+        }
 
+        if($this->getSurname1()){
+            if($fullName !== ''){
+                $fullName .= ' ';
+            }
+            $fullName .= $this->getSurname1();
+        }
+
+        if($this->getSurname2()){
+            if($fullName !== ''){
+                $fullName .= ' ';
+            }
+            $fullName .= $this->getSurname2();
+        }
+
+        return $fullName;
+
+    }
+
+    public function toArray() : array
+    {
+        return [
+            'id' => $this->getId(),
+            'email' => $this->getEmail(),
+            'enabled' => $this->isEnabled(),
+            'createdAt' => $this->getCreatedAt()->format('Y-m-d H:i:s'),
+            'entryDate' => $this->getEntryDate()?->format('Y-m-d H:i:s'),
+            'leavingDate' => $this->getLeavingDate()?->format('Y-m-d H:i:s'),
+            'name' => $this->getName(),
+            'surname1' => $this->getSurname1(),
+            'surname2' => $this->getSurname2(),
+            'roles' => $this->getRoles(),
+        ];
+    }
 }

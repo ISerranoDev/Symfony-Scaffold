@@ -45,21 +45,9 @@ class CreateAdminUserCommand extends Command
 
         $roleAdmin = $this->roleRepository->findOneBy(['name' => 'ROLE_ADMIN']);
 
-        $usernameCheck = false;
         $passwordCheck = false;
         $repasswordCheck = false;
         $emailCheck = false;
-
-        do {
-            $username = $io->ask('Enter your Username (used for login):');
-
-            if(!$this->userRepository->findOneBy(['username' => $username])){
-                $usernameCheck = true;
-            }else{
-                $io->error('This username already exist.');
-            }
-
-        }while(!$usernameCheck);
 
         do {
 
@@ -98,7 +86,6 @@ class CreateAdminUserCommand extends Command
         }while(!$emailCheck);
 
         $this->userRepository->createUser(
-            $username,
             $password,
             $email,
             [$roleAdmin]

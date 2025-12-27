@@ -17,7 +17,7 @@ class DashboardController extends AbstractController
         $this->dashboardService = $dashboardService;
     }
 
-    #[Route(path: '/', name: 'app_dashboard')]
+    #[Route(path: '/panel-de-control', name: 'app_dashboard')]
     public function dashboard(): Response
     {
         return $this->dashboardService->dashboard();

@@ -4,11 +4,12 @@ namespace App\Entity\User;
 
 use App\Entity\Role\Role;
 use Doctrine\ORM\Mapping as ORM;
+use App\Doctrine\UlidGenerator;
 
 
 #[ORM\Entity]
-#[ORM\Table(name: 'user_has_roles')]
-#[ORM\UniqueConstraint(name: "user_has_role_unique", columns: ["user_id", "role_id"])]
+#[ORM\Table(name: 'usuario_has_roles')]
+#[ORM\UniqueConstraint(name: "user_has_role_unique", columns: ["usuario_id", "rol_id"])]
 class UserHasRole
 {
 
@@ -17,27 +18,28 @@ class UserHasRole
     ////////////////////////////////////////////////////////////////
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private int $id;
+    #[ORM\Column(type: 'string', length: 50, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: UlidGenerator::class)]
+    private string $id;
 
     ////////////////////////////////////////////////////////////////
     /// Relationships
     ////////////////////////////////////////////////////////////////
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'roles')]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'usuario_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private User $user;
 
     #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'users')]
-    #[ORM\JoinColumn(name: 'role_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'rol_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private Role $role;
 
     ////////////////////////////////////////////////////////////////
     /// Fields
     ////////////////////////////////////////////////////////////////
 
-    public function getId(): int
+    public function getId(): string
     {
         return $this->id;
     }
@@ -46,7 +48,7 @@ class UserHasRole
      * @param int $id
      * @return UserHasRole
      */
-    public function setId(int $id): UserHasRole
+    public function setId(string $id): UserHasRole
     {
         $this->id = $id;
         return $this;
@@ -87,6 +89,4 @@ class UserHasRole
         $this->role = $role;
         return $this;
     }
-
-
 }

@@ -6,6 +6,7 @@ use App\Entity\User\User;
 use App\Utils\Classes\FilterService;
 use App\Utils\Interfaces\FilteredRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -27,18 +28,28 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, FilteredRepositoryInterface
 {
-    private UserPasswordHasherInterface $passwordHasher;
-    private PaginatorInterface $paginator;
 
     public function __construct(
         ManagerRegistry $registry,
-        UserPasswordHasherInterface $passwordHasher,
-        PaginatorInterface $paginator
+        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly PaginatorInterface $paginator
     )
     {
-        $this->passwordHasher = $passwordHasher;
-        $this->paginator = $paginator;
         parent::__construct($registry, User::class);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function getByIdentifier(string $identifier): ?User
+    {
+        $query = $this->createQueryBuilder('u')
+            ->andWhere('u.email = :email')
+            ->andWhere('u.enabled = 1')
+            ->setParameter('email', $identifier)
+        ;
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 
     public function list(FilterService $filterService): PaginationInterface
@@ -66,25 +77,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         foreach ($filter->getFilters() as $key => $value){
             switch ($key){
-                case 'username':
-                    $query->andWhere('u.username LIKE :username')
-                        ->setParameter('username', "%".$value."%")
-                    ;
-                    break;
 
-                case 'email':
+                case $key == 'email':
                     $query->andWhere('u.email LIKE :email')
                         ->setParameter('email', "%".$value."%")
                     ;
                     break;
 
-                case 'enabled' && $value !== '':
+                case $key == 'enabled' && $value !== '':
                     $query->andWhere('u.enabled = :enabled')
                         ->setParameter('enabled', $value)
                     ;
                     break;
 
-                case 'roles' && $value !== '':
+                case $key == 'roles' && $value !== '':
                     $query->andWhere('r.id = :role')
                         ->setParameter('role', $value)
                     ;
@@ -99,9 +105,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         foreach ($filter->getOrders() as $key => $value){
 
             switch ($key){
-                case 'username':
-                    $query->addOrderBy('u.username', $value);
-                    break;
 
                 case 'email':
                     $query->addOrderBy('u.email', $value);
@@ -138,7 +141,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     public function createUser(
-        string $username,
         string $password,
         string $email,
         array $roles,
@@ -151,7 +153,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     ): User
     {
         $user = (new User())
-            ->setUsername($username)
             ->setPassword($password)
             ->setEmail($email)
             ->setEnabled($enabled)
@@ -165,15 +166,14 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $this->upgradePassword($user, $password);
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
 
         return $user;
     }
 
     public function editUser(
         User $user,
-        string $username,
         ?string $password,
         string $email,
         array $roles,
@@ -186,7 +186,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     ): User
     {
         $user
-            ->setUsername($username)
             ->setEmail($email)
             ->setEnabled($enabled)
             ->setEntryDate($entryDate)
@@ -202,8 +201,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $this->upgradePassword($user, $password);
         }
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
 
         return $user;
     }
@@ -231,8 +230,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $this->upgradePassword($user, $password);
         }
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
 
         return $user;
     }
@@ -246,17 +245,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setRecoverCode($code)
             ->setRecoverCodeExpiration($expirationDate);
 
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
     }
 
     public function deleteUser(
         User $user
     ): void
     {
-        $this->_em->remove($user);
-        $this->_em->flush();
+        $this->getEntityManager()->remove($user);
+        $this->getEntityManager()->flush();
     }
 
-
+    public function getUsersByRole(string $role): array
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u')
+            ->leftJoin('u.roles', 'uhr')
+            ->leftJoin('uhr.role', 'r')
+            ->addSelect('uhr')
+            ->addSelect('r')
+            ->andWhere('r.name = :role')
+            ->setParameter('role', $role)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

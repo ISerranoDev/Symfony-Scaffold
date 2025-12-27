@@ -2,18 +2,9 @@
 
 namespace App\Request\Ticket;
 
-use App\Entity\User\User;
 use App\Request\ValidationRequest;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Validator\Constraints\Count;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Constraints\Type;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EditTicketRequest extends ValidationRequest
 {
@@ -32,9 +23,22 @@ class EditTicketRequest extends ValidationRequest
 
     #[NotBlank]
     #[NotNull]
+    protected null|string $id = null;
+
+    #[NotBlank]
+    #[NotNull]
     protected null|string $title = null;
 
     protected null|string $description = null;
 
+    public function customProcess(): void
+    {
+        $this->id = @$this->getRequest()->attributes->get('id');
+    }
+
+    public function getCsrfToken(): ?string
+    {
+        return 'edit-ticket';
+    }
 
 }

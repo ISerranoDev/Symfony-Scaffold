@@ -14,9 +14,12 @@ services:
 
   mariadb:
     container_name: symfony_scaffold_mariadb
-    image: mariadb:10.3.37
+    image: mariadb:11.4
     environment:
-      MYSQL_ROOT_PASSWORD: pass
+      MARIADB_DATABASE: symfony_scaffold
+      MYSQL_USER: user
+      MYSQL_PASSWORD: mysql
+      MYSQL_ROOT_PASSWORD: mysql
     networks:
       - symfony-scaffold-backend
     ports:
